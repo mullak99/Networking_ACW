@@ -1,4 +1,4 @@
-﻿namespace location
+﻿namespace mullak99.ACW.NetworkACW.location
 {
     partial class Form1
     {

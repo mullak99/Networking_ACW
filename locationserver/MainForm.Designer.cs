@@ -1,4 +1,4 @@
-﻿namespace locationserver
+﻿namespace mullak99.ACW.NetworkACW.locationserver
 {
     partial class Form1
     {
