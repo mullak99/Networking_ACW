@@ -23,7 +23,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
             }
             else
             {
-                throw new Exception("Invalid command supplied!");
+                throw new NotImplementedException(String.Format("Invalid command supplied!|{0}", commandString));
             }
         }
     }

@@ -2,18 +2,18 @@
 using mullak99.ACW.NetworkACW.LCHLib.Commands;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.locationserver
 {
     public class LocationServer
     {
         private TcpListener _listener;
-        private TcpClient _client;
+        //private Socket _netSocket;
+        private NetworkStream _socketStream;
 
         private IPAddress _ip = IPAddress.Any;
         private int _port;
@@ -22,58 +22,71 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         public LocationServer(int port = 43, bool runAsync = true)
         {
+            Logging.Log(String.Format("Starting LocationServer {0}...", Program.GetVersion()));
+
             _port = port;
             _listener = new TcpListener(_ip, _port);
 
-            if (runAsync) OpenAsync();
-            else Open();
+            Open();
         }
 
         public void Open()
         {
             if (!_connected)
             {
-                _connected = true;
-
-                Logging.Log(String.Format("Listening for connections on '{0}:{1}'.", _ip, _port));
-
-                while (_connected)
-                {
-                    _listener.Start();
-                    _client = _listener.AcceptTcpClient();
-
-                    HandleClientRequest(_client);
-                }
-            }
-            else Logging.Log("Server already running!", 3);
-        }
-
-        public void OpenAsync()
-        {
-            if (!_connected)
-            {
-                _connected = true;
-
-                _listener.Start();
-                Logging.Log(String.Format("Listening for connections on '{0}:{1}'.", _ip, _port));
+                StartListener();
                 WaitForClients();
             }
-            else Logging.Log("Server already running!", 3);
+            else Logging.Log("Server already running!", 2);
+        }
+
+        private void StartListener()
+        {
+            try
+            {
+                _listener.Start();
+
+                Logging.Log(String.Format("Listening for connections on '{0}:{1}'.", _ip, _port));
+
+                _connected = true;
+            }
+            catch (SocketException e)
+            {
+                _connected = false;
+
+                if (e.ToString().Contains("Only one usage of each socket address"))
+                    Logging.Log(String.Format("An existing server is already running on this port ({0})!", _port), 2);
+                else
+                    Logging.Log("An unexpected SocketException occured on StartListener. Exception: " + e.ToString(), 3);
+            }
+            catch (Exception e)
+            {
+                _connected = false;
+                Logging.Log("An unexpected exception occured on StartListener. Exception: " + e.ToString(), 3);
+            }
         }
 
         private void WaitForClients()
         {
-            _listener.BeginAcceptTcpClient(new System.AsyncCallback(OnClientConnected), null);
+            if (_connected)
+                _listener.BeginAcceptSocket(new System.AsyncCallback(OnClientConnected), null);
         }
 
         private void OnClientConnected(IAsyncResult asyncResult)
         {
             try
             {
-                TcpClient client = _listener.EndAcceptTcpClient(asyncResult);
-                if (client != null)
-                    Logging.Log("Received: " + client.Client.RemoteEndPoint.ToString());
-                HandleClientRequest(client);
+                Socket netSocket = _listener.EndAcceptSocket(asyncResult);
+                if (netSocket != null)
+                {
+                    _socketStream = new NetworkStream(netSocket);
+                    HandleClientRequest(_socketStream);
+                }
+                
+            }
+            catch (NotImplementedException e)
+            {
+                Logging.Log(String.Format("The server does not support the command '{0}'. Is the server outdated?", e.Message.Split('|')[1], 2));
             }
             catch (Exception e)
             {
@@ -82,15 +95,21 @@ namespace mullak99.ACW.NetworkACW.locationserver
             WaitForClients();
         }
 
-        private void HandleClientRequest(TcpClient client)
+        private void HandleClientRequest(NetworkStream netStream)
         {
-            NetworkStream nwStream = client.GetStream();
-            byte[] buffer = new byte[client.ReceiveBufferSize];
-            int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
-            string returnMessage = ExecuteCommand(LCH.ConvertStringToCommand(Encoding.UTF8.GetString(buffer, 0, bytesRead)));
+            StreamReader sr = new StreamReader(netStream);
+            StreamWriter sw = new StreamWriter(netStream);
 
-            byte[] dataBytes = ASCIIEncoding.UTF8.GetBytes(returnMessage);
-            nwStream.Write(dataBytes, 0, dataBytes.Length);
+            string recievedMessage = sr.ReadToEnd();
+
+            Logging.Log("Received: " + recievedMessage.Replace(Environment.NewLine, ""));
+
+            string returnMessage = ExecuteCommand(LCH.ConvertStringToCommand(recievedMessage.Replace(Environment.NewLine, "")));
+
+            Logging.Log("Sending: " + returnMessage);
+
+            sw.WriteLine(returnMessage);
+            sw.Flush();
         }
 
         private string ExecuteCommand(Command command)
@@ -116,7 +135,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
         public void Close()
         {
             _connected = false;
-            _client.Close();
+            _socketStream.Close();
             _listener.Stop();
         }
     }

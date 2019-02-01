@@ -1,12 +1,8 @@
 ﻿using mullak99.ACW.NetworkACW.LCHLib.Commands;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.location
 {
@@ -18,10 +14,15 @@ namespace mullak99.ACW.NetworkACW.location
         private string _ip;
         private int _port;
 
-        public LocationClient(string serverAddress, int serverPort)
+        private int _timeOut;
+
+        public LocationClient(string serverAddress, int serverPort, UInt16 timeOut = 2000)
         {
+            Logging.Log(String.Format("Starting LocationClient {0}...", Program.GetVersion()));
+
             _ip = serverAddress;
             _port = serverPort;
+            _timeOut = Convert.ToInt32(timeOut);
 
             Open();
         }
@@ -30,7 +31,31 @@ namespace mullak99.ACW.NetworkACW.location
         {
             try
             {
-                _client = new TcpClient(_ip, _port);
+                _client = new TcpClient();
+                _client.ReceiveTimeout = _timeOut;
+                _client.SendTimeout = _timeOut;
+
+                IAsyncResult ar = _client.BeginConnect(_ip, _port, null, null);
+                System.Threading.WaitHandle wh = ar.AsyncWaitHandle;
+                try
+                {
+                    if (_timeOut < 10000 && !ar.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(_timeOut), false))
+                    {
+                        _client.Close();
+                        throw new TimeoutException();
+                    }
+                    else if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(10000), false))
+                    {
+                        _client.Close();
+                        throw new TimeoutException();
+                    }
+
+                    _client.EndConnect(ar);
+                }
+                finally
+                {
+                    wh.Close();
+                }
 
                 Logging.Log(String.Format("Connected to server at '{0}:{1}'!", _ip, _port));
                 _connected = true;
@@ -40,9 +65,13 @@ namespace mullak99.ACW.NetworkACW.location
                 _connected = false;
 
                 if (e.ToString().Contains("No connection could be made because the target machine"))
-                    Logging.Log(String.Format("Server at '{0}:{1}' could not be reached!", _ip, _port), 3);
+                    Logging.Log(String.Format("Server at '{0}:{1}' could not be reached!", _ip, _port), 2);
                 else
                     Logging.Log("An unexpected SocketException error occured while connecting to the server! Exception: " + e.ToString(), 3);
+            }
+            catch (TimeoutException)
+            {
+                Logging.Log(String.Format("Connection to '{0}:{1}' timed out!", _ip, _port), 2);
             }
             catch (Exception e)
             {
@@ -65,12 +94,9 @@ namespace mullak99.ACW.NetworkACW.location
         {
             try
             {
-                NetworkStream nwStream = _client.GetStream();
-                nwStream.ReadTimeout = 2000;
+                StreamReader sr = new StreamReader(_client.GetStream());
 
-                byte[] bytesToRead = new byte[_client.ReceiveBufferSize];
-                int bytesRead = nwStream.Read(bytesToRead, 0, _client.ReceiveBufferSize);
-                Logging.Log("Received: " + Encoding.UTF8.GetString(bytesToRead, 0, bytesRead));
+                Logging.Log("Received: " + sr.ReadToEnd());
             }
             catch (IOException)
             {
@@ -80,7 +106,10 @@ namespace mullak99.ACW.NetworkACW.location
 
         public void SendCommand(Command command)
         {
+            if (!_connected) Open();
+
             SendRawString(command.ComposeCommand());
+            Close();
         }
 
         private void SendRawString(string data)
@@ -89,11 +118,10 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 try
                 {
-                    NetworkStream nwStream = _client.GetStream();
-
-                    byte[] dataBytes = ASCIIEncoding.UTF8.GetBytes(data);
-                    Logging.Log("Sending: " + data);
-                    nwStream.Write(dataBytes, 0, dataBytes.Length);
+                    StreamWriter sw = new StreamWriter(_client.GetStream());
+                    Logging.Log("Sending: " + data.Replace(Environment.NewLine, ""));
+                    sw.WriteLine(data);
+                    sw.Flush();
                 }
                 catch (IOException)
                 {
