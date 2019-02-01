@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("location")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("LocationClient")]
+[assembly: AssemblyDescription("Client for getting and setting someones location on a server using TCP")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("location")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyProduct("LocationClient")]
+[assembly: AssemblyCopyright("Apache 2.0 | mullak99")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

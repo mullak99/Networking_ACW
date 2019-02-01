@@ -5,8 +5,9 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClassLibrary1")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("LCH")]
+[assembly: AssemblyDescription("LCH (LocationCommandHandler) is a library used by LocationClient and LocationServer Location (Client) and LocationServer (Server) for the purpose of handling 
+commands used for client - server communication"))]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ClassLibrary1")]
@@ -34,3 +35,6 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyProduct("LCH")]
+[assembly: AssemblyCopyright("Apache 2.0 | mullak99")]
+
