@@ -2,16 +2,17 @@
 
 ACW1 for 'Networking and User Interface Design' (500081).
 
-## Location
+## Location/LocationClient
 
-The client for reading and writing data to and from the server.
+Client for getting and setting someones location on a server using TCP.
 
 ## LocationServer
 
-The server for handling read and write requests. Also handles the database
-and its entries.
+Server for LocationClient. Used to manage the locations of users in a database
+and respond to get/set requests from the Client.
 
 ## LCH
 
-A library used by Location (Client) and LocationServer (Server) to handle
-commands used to communicate with eachother.
+LCH (LocationCommandHandler) is a library used by LocationClient and
+LocationServer Location (Client) and LocationServer (Server) for the purpose of
+handling commands used for client-server communication.
