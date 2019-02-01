@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LCH">
+      <HintPath>..\LCH\bin\Debug\LCH.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LocationServer.cs" />
+    <Compile Include="Logging.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

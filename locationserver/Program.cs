@@ -33,7 +33,6 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 AllocConsole();
                 LocationServer server = new LocationServer(43);
 
-                Console.WriteLine("Ended");
                 Console.ReadKey();
             }
         }
