@@ -1,5 +1,7 @@
 # Networking ACW
 
+ACW1 for 'Networking and User Interface Design' (500081).
+
 ## Location
 
 The client for reading and writing data to and from the server.
