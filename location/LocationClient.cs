@@ -97,9 +97,11 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 StreamReader sr = new StreamReader(_client.GetStream());
 
-                Logging.Log("Recieved: " + sr.ReadToEnd().TrimEnd('\n'), 0);
+                string data = sr.ReadToEnd().TrimEnd('\n');
 
-                Logging.Log(sr.ReadToEnd().TrimEnd('\n'));
+                Logging.Log("Recieved: " + data, 0);
+
+                Logging.Log(data);
             }
             catch (IOException)
             {

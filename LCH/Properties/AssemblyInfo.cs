@@ -6,12 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LCH")]
-[assembly: AssemblyDescription("LCH (LocationCommandHandler) is a library used by LocationClient and LocationServer Location (Client) and LocationServer (Server) for the purpose of handling 
-commands used for client - server communication"))]
+[assembly: AssemblyDescription("LCH (LocationCommandHandler) is a library used by LocationClient and LocationServer Location (Client) and LocationServer (Server) for the purpose of handling commands used for client - server communication")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClassLibrary1")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyProduct("LCH")]
+[assembly: AssemblyCopyright("Apache 2.0 | mullak99")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -35,6 +34,4 @@ commands used for client - server communication"))]
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: AssemblyProduct("LCH")]
-[assembly: AssemblyCopyright("Apache 2.0 | mullak99")]
 

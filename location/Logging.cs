@@ -25,7 +25,7 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 Console.WriteLine("[{0} WARN] {1}", CurrentTime(), log);
             }
-            else
+            else if (severity == 3)
             {
                 Console.WriteLine("[{0} ERROR] {1}", CurrentTime(), log);
             }
