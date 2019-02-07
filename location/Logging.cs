@@ -11,9 +11,13 @@ namespace mullak99.ACW.NetworkACW.location
         public Logging()
         { }
 
-        public static void Log(string log, int severity = 0)
+        public static void Log(string log, int severity = 1)
         {
-            if (severity < 1)
+            if (severity == 0 && Program.GetDebug())
+            {
+                Console.WriteLine("[{0} DEBUG] {1}", CurrentTime(), log);
+            }
+            if (severity == 1)
             {
                 Console.WriteLine("[{0} INFO] {1}", CurrentTime(), log);
             }

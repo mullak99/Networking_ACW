@@ -1,6 +1,7 @@
 ﻿using mullak99.ACW.NetworkACW.LCHLib.Commands;
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -16,11 +17,11 @@ namespace mullak99.ACW.NetworkACW.location
 
         private int _timeOut;
 
-        public LocationClient(string serverAddress, int serverPort, UInt16 timeOut = 2000)
+        public LocationClient(IPAddress serverIpAddress, int serverPort, UInt16 timeOut = 2000)
         {
             Logging.Log(String.Format("Starting LocationClient {0}...", Program.GetVersion()));
 
-            _ip = serverAddress;
+            _ip = serverIpAddress.ToString();
             _port = serverPort;
             _timeOut = Convert.ToInt32(timeOut);
 
@@ -96,7 +97,9 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 StreamReader sr = new StreamReader(_client.GetStream());
 
-                Logging.Log("Received: " + sr.ReadToEnd());
+                Logging.Log("Recieved: " + sr.ReadToEnd().TrimEnd('\n'), 0);
+
+                Logging.Log(sr.ReadToEnd().TrimEnd('\n'));
             }
             catch (IOException)
             {
@@ -119,7 +122,7 @@ namespace mullak99.ACW.NetworkACW.location
                 try
                 {
                     StreamWriter sw = new StreamWriter(_client.GetStream());
-                    Logging.Log("Sending: " + data.Replace(Environment.NewLine, ""));
+                    Logging.Log("Sending: " + data.TrimEnd('\n'), 0);
                     sw.WriteLine(data);
                     sw.Flush();
                 }

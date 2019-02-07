@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -90,15 +91,24 @@ namespace mullak99.ACW.NetworkACW.location
             else
             {
                 AllocConsole();
-                LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0].ToString(), _serverPort, _timeOut);
 
-                location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs)));
+                try
+                {
+                    LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0], _serverPort, _timeOut);
 
-                //location.SendCommand(LCH.ConvertStringToCommand("mullak99 Library"));
-                //location.SendCommand(LCH.ConvertStringToCommand("mullak99"));
+                    location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs)));
 
-                location.Close();
-                Console.ReadKey();
+                    //location.SendCommand(LCH.ConvertStringToCommand("mullak99 Library"));
+                    //location.SendCommand(LCH.ConvertStringToCommand("mullak99"));
+
+                    location.Close();
+                    Console.ReadKey();
+                }
+                catch (SocketException)
+                {
+                    Logging.Log(String.Format("'{0}' is an address!", _serverAddress), 2);
+                }
+                
             }
         }
 
@@ -107,6 +117,11 @@ namespace mullak99.ACW.NetworkACW.location
             string[] ver = (typeof(location.Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
 
             return "v" + ver[0] + "." + ver[1] + "." + ver[2];
+        }
+
+        public static bool GetDebug()
+        {
+            return _verbose;
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
