@@ -24,5 +24,10 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         {
             return new List<string>() { _user };
         }
+
+        public string GetPersonID()
+        {
+            return _user;
+        }
     }
 }

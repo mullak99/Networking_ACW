@@ -25,5 +25,15 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         {
             return new List<string>() { _user, _location };
         }
+
+        public string GetPersonID()
+        {
+            return _user;
+        }
+
+        public string GetLocation()
+        {
+            return _location;
+        }
     }
 }

@@ -17,9 +17,18 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
             {
                 return new CommandGetLocation(commandParts[0]);
             }
-            else if (commandParts.Length == 2)
+            else if (commandParts.Length >= 2)
             {
-                return new CommandSetLocation(commandParts[0], commandParts[1]);
+                string combinedParts = "";
+
+                for (int i = 1; i < commandParts.Length; i++)
+                {
+                    combinedParts += commandParts[i];
+                    combinedParts += " ";
+                }
+                combinedParts.TrimEnd(' ');
+
+                return new CommandSetLocation(commandParts[0], combinedParts);
             }
             else
             {

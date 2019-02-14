@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using mullak99.ACW.NetworkACW.LCHLib;
 
@@ -19,6 +17,9 @@ namespace mullak99.ACW.NetworkACW.location
         private static string _serverAddress = "127.0.0.1";
         private static int _serverPort = 43;
         private static UInt16 _timeOut = 2000;
+
+        internal static Logging logging;
+        private static string _logFile;
 
         private static bool _useHTTP09 = false;
         private static bool _useHTTP10 = false;
@@ -45,8 +46,14 @@ namespace mullak99.ACW.NetworkACW.location
                         progArgs.Add(string.Join(" ", args[i], args[i + 1]));
                         i++;
                     }
-                    else if (args[i].ToLower().TrimStart('/', '-') == "t" && !String.IsNullOrEmpty(args[i + 1]) && UInt16.TryParse(args[i + 1], out _timeOut)) // Timeout (ms)
+                    else if (args[i].ToLower().TrimStart('/', '-') == "t" && !String.IsNullOrEmpty(args[i + 1])) // Timeout (ms)
                     {
+                        progArgs.Add(string.Join(" ", args[i], args[i + 1]));
+                        i++;
+                    }
+                    else if (args[i].ToLower().TrimStart('/', '-') == "l" && !String.IsNullOrEmpty(args[i + 1])) // Log File Path
+                    {
+                        _logFile = args[i + 1];
                         progArgs.Add(string.Join(" ", args[i], args[i + 1]));
                         i++;
                     }
@@ -79,6 +86,7 @@ namespace mullak99.ACW.NetworkACW.location
                 }
             }
 
+            logging = new Logging(_verbose, _logFile);
 
             if (args.Length == 0)
             {
@@ -98,15 +106,14 @@ namespace mullak99.ACW.NetworkACW.location
 
                     location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs)));
 
-                    //location.SendCommand(LCH.ConvertStringToCommand("mullak99 Library"));
-                    //location.SendCommand(LCH.ConvertStringToCommand("mullak99"));
-
                     location.Close();
-                    Console.ReadKey();
+
+                    if (GetDebug())
+                        Console.ReadKey();
                 }
                 catch (SocketException)
                 {
-                    Logging.Log(String.Format("'{0}' is an address!", _serverAddress), 2);
+                    logging.Log(String.Format("'{0}' is not an address!", _serverAddress), 2);
                 }
                 
             }
@@ -122,6 +129,11 @@ namespace mullak99.ACW.NetworkACW.location
         public static bool GetDebug()
         {
             return _verbose;
+        }
+
+        public static string GetLogPath()
+        {
+            return _logFile;
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]

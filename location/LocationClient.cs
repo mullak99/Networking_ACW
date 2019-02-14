@@ -19,7 +19,10 @@ namespace mullak99.ACW.NetworkACW.location
 
         public LocationClient(IPAddress serverIpAddress, int serverPort, UInt16 timeOut = 2000)
         {
-            Logging.Log(String.Format("Starting LocationClient {0}...", Program.GetVersion()));
+            Program.logging.Log(String.Format("Starting LocationClient {0}...", Program.GetVersion()), 0);
+
+            if (Program.GetDebug())
+                Program.logging.Log(String.Format("Debug Mode Enabled!", Program.GetVersion()), 0);
 
             _ip = serverIpAddress.ToString();
             _port = serverPort;
@@ -57,8 +60,10 @@ namespace mullak99.ACW.NetworkACW.location
                 {
                     wh.Close();
                 }
+                
+                //_client.Connect(_ip, _port);
 
-                Logging.Log(String.Format("Connected to server at '{0}:{1}'!", _ip, _port));
+                Program.logging.Log(String.Format("Connected to server at '{0}:{1}'!", _ip, _port), 0);
                 _connected = true;
             }
             catch (SocketException e)
@@ -66,17 +71,17 @@ namespace mullak99.ACW.NetworkACW.location
                 _connected = false;
 
                 if (e.ToString().Contains("No connection could be made because the target machine"))
-                    Logging.Log(String.Format("Server at '{0}:{1}' could not be reached!", _ip, _port), 2);
+                    Program.logging.Log(String.Format("Server at '{0}:{1}' could not be reached!", _ip, _port), 2);
                 else
-                    Logging.Log("An unexpected SocketException error occured while connecting to the server! Exception: " + e.ToString(), 3);
+                    Program.logging.Log("An unexpected SocketException error occured while connecting to the server! Exception: " + e.ToString(), 3);
             }
             catch (TimeoutException)
             {
-                Logging.Log(String.Format("Connection to '{0}:{1}' timed out!", _ip, _port), 2);
+                Program.logging.Log(String.Format("Connection to '{0}:{1}' timed out!", _ip, _port), 2);
             }
             catch (Exception e)
             {
-                Logging.Log("An unexpected error occured while connecting to the server! Exception: " + e.ToString(), 3);
+                Program.logging.Log("An unexpected error occured while connecting to the server! Exception: " + e.ToString(), 3);
             }
         }
 
@@ -87,25 +92,44 @@ namespace mullak99.ACW.NetworkACW.location
                 _connected = false;
                 _client.Close();
 
-                Logging.Log(String.Format("Disconnected from server '{0}:{1}'!", _ip, _port));
+                Program.logging.Log(String.Format("Disconnected from server '{0}:{1}'!", _ip, _port), 0);
             }
         }
 
-        public void WaitForResponse()
+        public void WaitForResponse(Command command)
         {
             try
             {
                 StreamReader sr = new StreamReader(_client.GetStream());
 
-                string data = sr.ReadToEnd().TrimEnd('\n');
+                string data = sr.ReadToEnd().TrimEnd('\n', '\r');
 
-                Logging.Log("Recieved: " + data, 0);
+                Program.logging.Log("Recieved: " + data, 0);
 
-                Logging.Log(data);
+                if (command.GetType() == typeof(CommandGetLocation))
+                {
+                    CommandGetLocation cmd = (CommandGetLocation)command;
+
+                    if (!String.IsNullOrEmpty(data) && !data.Contains("does not exist"))
+                        Program.logging.Log(String.Format("{0} is {1}", cmd.GetPersonID(), data));
+                    else
+                        Program.logging.Log(String.Format("{0} does not exist on the server!", cmd.GetPersonID()));
+                }
+                else if (command.GetType() == typeof(CommandSetLocation))
+                {
+                    CommandSetLocation cmd = (CommandSetLocation)command;
+
+                    if (!String.IsNullOrEmpty(data) && !data.Contains("does not exist"))
+                        Program.logging.Log(data);
+                    else
+                        Program.logging.Log(String.Format("{0} does not exist on the server!", cmd.GetPersonID()));
+                }
+                else
+                    Program.logging.Log(data);
             }
             catch (IOException)
             {
-                Logging.Log("Read request timed out.", 2);
+                Program.logging.Log("Read request timed out.", 2);
             }
         }
 
@@ -113,30 +137,27 @@ namespace mullak99.ACW.NetworkACW.location
         {
             if (!_connected) Open();
 
-            SendRawString(command.ComposeCommand());
-            Close();
-        }
+            string data = command.ComposeCommand();
 
-        private void SendRawString(string data)
-        {
             if (_connected)
             {
                 try
                 {
                     StreamWriter sw = new StreamWriter(_client.GetStream());
-                    Logging.Log("Sending: " + data.TrimEnd('\n'), 0);
+                    Program.logging.Log("Sending: " + data.TrimEnd('\n'), 0);
                     sw.WriteLine(data);
                     sw.Flush();
                 }
                 catch (IOException)
                 {
-                    Logging.Log("Send request timed out.", 2);
+                    Program.logging.Log("Send request timed out.", 2);
                 }
 
-                WaitForResponse();
+                WaitForResponse(command);
             }
-            else Logging.Log("You are not connected to a server!", 2);
+            else Program.logging.Log("You are not connected to a server!", 2);
 
+            Close();
         }
     }
 }
