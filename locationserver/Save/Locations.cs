@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,10 +9,17 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
 {
     public class Locations
     {
+        protected string _dbPath;
+        internal Database _dataBase;
+
         protected List<PersonLocation> _peopleLocations = new List<PersonLocation>();
 
-        public Locations()
-        { }
+        public Locations(string databaseFilePath = null)
+        {
+            _dbPath = databaseFilePath;
+
+            ImportFromDB();
+        }
 
         public bool AddPersonLocation(PersonLocation personLocation, bool useSetOnFail = false)
         {
@@ -19,6 +27,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
             {
                 Program.logging.Log(String.Format("LocationsDB: Added '{0}' in location '{1}' to the database!", personLocation.GetPersonID(), personLocation.GetPersonLocation()), 0);
                 _peopleLocations.Add(personLocation);
+                ExportToDB();
                 return true;
             }
             else if (useSetOnFail)
@@ -34,6 +43,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
             {
                 Program.logging.Log(String.Format("LocationsDB: Changed the location of '{0}' to '{1}' in the database!", personLocation.GetPersonID(), personLocation.GetPersonLocation()), 0);
                 _peopleLocations[_peopleLocations.IndexOf(GetPersonLocation(personLocation))].SetPersonLocation(personLocation.GetPersonLocation());
+                ExportToDB();
                 return true;
             }
             return false;
@@ -68,16 +78,35 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
             return DoesPersonExist(personLocation.GetPersonID());
         }
 
-        public bool ImportFromDB(string fileName)
+        public bool ImportFromDB()
         {
-            Program.logging.Log(String.Format("LocationsDB: Importing from a database is not supported at this time!"), 2);
+            if (!String.IsNullOrEmpty(_dbPath))
+            {
+                if (Database.IsFileSQLiteDB(_dbPath))
+                {
+                    _dataBase = new Database(_dbPath);
+                    _peopleLocations = _dataBase.LoadDB();
+                    Program.logging.Log(String.Format("LocationsDB: Importing Locations from '{0}'", _dbPath), 0);
+                    return true;
+                }
+                Program.logging.Log(String.Format("LocationsDB: '{0}' is not a valid database! Loading aborted", _dbPath), 2);
+                return false;
+            }
+            //Program.logging.Log(String.Format("LocationsDB: Database path not provided! Loading aborted"), 2);
             return false;
         }
 
-        public bool ExportToDB(string fileName)
+        public void ExportToDB()
         {
-            Program.logging.Log(String.Format("LocationsDB: Exporting to a database is not supported at this time!"), 2);
-            return false;
+            if (!String.IsNullOrEmpty(_dbPath))
+            {
+                if (_dataBase == null)
+                    _dataBase = new Database(_dbPath);
+
+                Program.logging.Log(String.Format("LocationsDB: Exporting Locations to '{0}'...", _dbPath), 0);
+                _dataBase.SaveDB(_peopleLocations);
+            }
+            //else Program.logging.Log(String.Format("LocationsDB: Database path not provided! Saving aborted"), 2);
         }
     }
 

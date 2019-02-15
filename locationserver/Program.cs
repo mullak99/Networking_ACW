@@ -9,7 +9,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
 {
     static class Program
     {
-        public static Locations locations = new Locations();
+        public static Locations locations;
 
         private static bool _UI = false;
         private static int _port = 43;
@@ -47,6 +47,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
             }
 
             logging = new Logging(_verbose, _logFile);
+            locations = new Locations(_dbFile);
 
             if (_UI)
             {
