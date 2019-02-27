@@ -110,7 +110,7 @@ namespace mullak99.ACW.NetworkACW.location
                 {
                     CommandGetLocation cmd = (CommandGetLocation)command;
 
-                    if (!String.IsNullOrEmpty(data) && !data.Contains("does not exist"))
+                    if (!String.IsNullOrEmpty(data) && !data.StartsWith("ERROR"))
                         Program.logging.Log(String.Format("{0} is {1}", cmd.GetPersonID(), data));
                     else
                         Program.logging.Log(String.Format("{0} does not exist on the server!", cmd.GetPersonID()));
@@ -119,17 +119,17 @@ namespace mullak99.ACW.NetworkACW.location
                 {
                     CommandSetLocation cmd = (CommandSetLocation)command;
 
-                    if (!String.IsNullOrEmpty(data) && !data.Contains("does not exist"))
-                        Program.logging.Log(data);
+                    if (data == "OK")
+                        Program.logging.Log(String.Format("{0} location changed to be {1}", cmd.GetPersonID(), cmd.GetLocation()));
                     else
-                        Program.logging.Log(String.Format("{0} does not exist on the server!", cmd.GetPersonID()));
+                        Program.logging.Log(String.Format("ERROR: An unexpected error occured while changing {0}'s location!", cmd.GetPersonID()));
                 }
                 else
                     Program.logging.Log(data);
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                Program.logging.Log("Read request timed out.", 2);
+                Program.logging.Log("Error: " + e.Message, 2);
             }
         }
 
@@ -144,7 +144,7 @@ namespace mullak99.ACW.NetworkACW.location
                 try
                 {
                     StreamWriter sw = new StreamWriter(_client.GetStream());
-                    Program.logging.Log("Sending: " + data.TrimEnd('\n'), 0);
+                    Program.logging.Log("Sending: " + data.TrimEnd('\n', '\r'), 0);
                     sw.WriteLine(data);
                     sw.Flush();
                 }

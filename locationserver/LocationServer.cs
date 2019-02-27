@@ -101,7 +101,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 if (pLocation != null)
                     return pLocation.GetPersonLocation();
                 else
-                    return String.Format("{0} does not exist!", getLocation.GetPersonID());
+                    return "ERROR: no entries found";
             }
             else if (command.GetType() == typeof(CommandSetLocation))
             {
@@ -111,12 +111,12 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 bool success = Program.locations.AddPersonLocation(new PersonLocation(setLocation.GetPersonID(), setLocation.GetLocation()));
 
                 if (success)
-                    return String.Format("{0}'s location has been set to {1}", setLocation.GetPersonID(), setLocation.GetLocation());
+                    return "OK";
                 else
-                    return String.Format("Could not add '{0}' to location '{1}' in the database! Please contact the server operator for more information!", setLocation.GetPersonID(), setLocation.GetLocation());
+                    return String.Format("ERROR: Could not add '{0}' to location '{1}' in the database! Please contact the server operator for more information!", setLocation.GetPersonID(), setLocation.GetLocation());
             }
             else
-                return String.Format("Unsupported Command! ({0})", string.Join(" ", args));
+                return "ERROR: an unexpected error occured!";
         }
 
         public void Close()

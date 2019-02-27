@@ -14,9 +14,17 @@ namespace mullak99.ACW.NetworkACW.LCHLib
 
         }
 
-        public static Command ConvertStringToCommand(string commandString)
+        public static Command ConvertStringToCommand(string commandString, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
-            return CommandHandler.CommandFinder(commandString);
+            return CommandHandler.CommandFinder(commandString, protocol);
         }
+
+        public enum Protocol
+        {
+            WHOIS,
+            HTTP09,
+            HTTP10,
+            HTTP11
+        };
     }
 }

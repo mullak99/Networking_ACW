@@ -9,13 +9,13 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
 {
     internal class CommandHandler
     {
-        internal static Command CommandFinder(string commandString)
+        internal static Command CommandFinder(string commandString, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
             string[] commandParts = Regex.Matches(commandString, @"[\""].+?[\""]|[^ ]+").Cast<Match>().Select(m => m.Value).ToArray();
 
             if (commandParts.Length == 1)
             {
-                return new CommandGetLocation(commandParts[0]);
+                return new CommandGetLocation(commandParts[0], protocol);
             }
             else if (commandParts.Length >= 2)
             {
@@ -28,7 +28,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
                 }
                 combinedParts.TrimEnd(' ');
 
-                return new CommandSetLocation(commandParts[0], combinedParts);
+                return new CommandSetLocation(commandParts[0], combinedParts, protocol);
             }
             else
             {

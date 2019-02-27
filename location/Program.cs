@@ -21,9 +21,7 @@ namespace mullak99.ACW.NetworkACW.location
         internal static Logging logging;
         private static string _logFile;
 
-        private static bool _useHTTP09 = false;
-        private static bool _useHTTP10 = false;
-        private static bool _useHTTP11 = false;
+        private static LCH.Protocol _protocol = LCH.Protocol.WHOIS;
 
         private static bool _verbose = false;
 
@@ -57,19 +55,19 @@ namespace mullak99.ACW.NetworkACW.location
                         progArgs.Add(string.Join(" ", args[i], args[i + 1]));
                         i++;
                     }
-                    else if (args[i].ToLower().TrimStart('/', '-') == "h9" && _useHTTP10 == false && _useHTTP11 == false) // HTTP/0.9
+                    else if (args[i].ToLower().TrimStart('/', '-') == "h9") // HTTP/0.9
                     {
-                        _useHTTP09 = true;
+                        _protocol = LCH.Protocol.HTTP09;
                         progArgs.Add(args[i]);
                     }
-                    else if (args[i].ToLower().TrimStart('/', '-') == "h0" && _useHTTP09 == false && _useHTTP11 == false) // HTTP/1.0
+                    else if (args[i].ToLower().TrimStart('/', '-') == "h0") // HTTP/1.0
                     {
-                        _useHTTP10 = true;
+                        _protocol = LCH.Protocol.HTTP10;
                         progArgs.Add(args[i]);
                     }
-                    else if (args[i].ToLower().TrimStart('/', '-') == "h1" && _useHTTP09 == false && _useHTTP10 == false) // HTTP/1.1
+                    else if (args[i].ToLower().TrimStart('/', '-') == "h1") // HTTP/1.1
                     {
-                        _useHTTP11 = true;
+                        _protocol = LCH.Protocol.HTTP11;
                         progArgs.Add(args[i]);
                     }
                     else if (args[i].ToLower().TrimStart('/', '-') == "d" || args[i].ToLower().TrimStart('/', '-') == "debug" || args[i].ToLower().TrimStart('/', '-') == "verbose") // Debug Mode
@@ -104,7 +102,7 @@ namespace mullak99.ACW.NetworkACW.location
                 {
                     LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0], _serverPort, _timeOut);
 
-                    location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs)));
+                    location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs), _protocol));
 
                     location.Close();
 
