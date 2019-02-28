@@ -9,6 +9,10 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
     public interface Command
     {
         string ComposeCommand();
+        string GetPersonID();
+        string GetLocation();
+        LCH.Protocol GetProtocol();
+        bool ResolveResponse(string data);
         List<string> GetArguments();
     }
 }

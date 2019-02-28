@@ -100,32 +100,29 @@ namespace mullak99.ACW.NetworkACW.location
         {
             try
             {
-                StreamReader sr = new StreamReader(_client.GetStream());
+                StreamReader sr = new StreamReader(_client.GetStream(), Encoding.ASCII);
 
-                string data = sr.ReadToEnd().TrimEnd('\n', '\r');
+                string data = sr.ReadToEnd();
 
-                Program.logging.Log("Recieved: " + data, 0);
+                Program.logging.Log(String.Format("Recieved (Protocol={0}): {1}", command.GetProtocol().ToString(), data.Replace("\r\n", "<CR><LF>")), 0);
 
                 if (command.GetType() == typeof(CommandGetLocation))
                 {
                     CommandGetLocation cmd = (CommandGetLocation)command;
 
-                    if (!String.IsNullOrEmpty(data) && !data.StartsWith("ERROR"))
-                        Program.logging.Log(String.Format("{0} is {1}", cmd.GetPersonID(), data));
-                    else
-                        Program.logging.Log(String.Format("{0} does not exist on the server!", cmd.GetPersonID()));
+                    bool ok = cmd.ResolveResponse(data);
+                    Program.logging.Log(cmd.ToString());
                 }
                 else if (command.GetType() == typeof(CommandSetLocation))
                 {
                     CommandSetLocation cmd = (CommandSetLocation)command;
 
-                    if (data == "OK")
+                    if (cmd.ResolveResponse(data))
                         Program.logging.Log(String.Format("{0} location changed to be {1}", cmd.GetPersonID(), cmd.GetLocation()));
                     else
                         Program.logging.Log(String.Format("ERROR: An unexpected error occured while changing {0}'s location!", cmd.GetPersonID()));
                 }
-                else
-                    Program.logging.Log(data);
+                else Program.logging.Log(data);
             }
             catch (IOException e)
             {
@@ -143,10 +140,11 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 try
                 {
-                    StreamWriter sw = new StreamWriter(_client.GetStream());
-                    Program.logging.Log("Sending: " + data.TrimEnd('\n', '\r'), 0);
-                    sw.WriteLine(data);
+                    StreamWriter sw = new StreamWriter(_client.GetStream(), Encoding.ASCII);
+                    sw.Write(data);
                     sw.Flush();
+
+                    Program.logging.Log(String.Format("Sending (Protocol={0}): {1}", command.GetProtocol().ToString(), data.Replace("\r\n", "<CR><LF>")), 0);
                 }
                 catch (IOException)
                 {

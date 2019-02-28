@@ -15,6 +15,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         {
             _user = user;
             _location = location;
+            _protocol = protocol;
         }
 
         public string ComposeCommand()
@@ -23,21 +24,21 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
             {
                 case LCH.Protocol.HTTP09:
                     {
-                        return String.Format("SET /{0}\r\n\r\n{1}\r\n", _user, _location);
+                        return String.Format("PUT /{0}\r\n\r\n{1}\r\n", _user.TrimEnd(' '), _location.TrimEnd(' '));
                     }
                 case LCH.Protocol.HTTP10:
                     {
-                        return String.Format("POST /{0} HTTP/1.0\r\nContent-Length: {1}\r\nmullak99\r\n{2}", _user, _location.Length, _location);
+                        return String.Format("POST /{0} HTTP/1.0\r\nContent-Length: {1}\r\n{2}\r\n{3}", _user.TrimEnd(' '), _location.TrimEnd(' ').Length, LCH.LCH_HeaderContent, _location.TrimEnd(' '));
                     }
                 case LCH.Protocol.HTTP11:
                     {
-                        string content = String.Format("name={0}&location={1}", _user, _location);
-                        return String.Format("POST / HTTP/1.1\r\nHost: LocationClient-m99\r\nContent-Length: {0}\r\nmullak99\r\n{1}", content.Length, content);
+                        string content = String.Format("name={0}&location={1}", _user.TrimEnd(' '), _location.TrimEnd(' '));
+                        return String.Format("POST / HTTP/1.1\r\nHost: LocationClient-m99\r\nContent-Length: {0}\r\n{1}\r\n{2}", content.Length, LCH.LCH_HeaderContent, content);
                     }
                 default:
                 case LCH.Protocol.WHOIS:
                     {
-                        return String.Format("{0} {1}", _user, _location);
+                        return String.Format("{0} {1}\r\n", _user, _location);
                     }
             }
         }
@@ -55,6 +56,59 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         public string GetLocation()
         {
             return _location;
+        }
+
+        public LCH.Protocol GetProtocol()
+        {
+            return _protocol;
+        }
+
+        public override string ToString()
+        {
+            if (!String.IsNullOrEmpty(_user) && !String.IsNullOrEmpty(_location))
+            {
+                return String.Format("{0} is {1}", _user, _location);
+            }
+            else return null;
+        }
+
+        public bool ResolveResponse(string data)
+        {
+            switch (_protocol)
+            {
+                case LCH.Protocol.HTTP09:
+                    {
+                        string[] dataLines = data.Replace("\r", "").Split('\n');
+                        if (dataLines[0] == "HTTP/0.9 200 OK")
+                            return true;
+                        else
+                            return false;
+                    }
+                case LCH.Protocol.HTTP10:
+                    {
+                        string[] dataLines = data.Replace("\r", "").Split('\n');
+                        if (dataLines[0] == "HTTP/1.0 200 OK")
+                            return true;
+                        else
+                            return false;
+                    }
+                case LCH.Protocol.HTTP11:
+                    {
+                        string[] dataLines = data.Replace("\r", "").Split('\n');
+                        if (dataLines[0] == "HTTP/1.1 200 OK")
+                            return true;
+                        else
+                            return false;
+                    }
+                default:
+                case LCH.Protocol.WHOIS:
+                    {
+                        if (!String.IsNullOrEmpty(data) && !data.StartsWith("ERROR"))
+                            return true;
+                        else
+                            return false;
+                    }
+            }
         }
     }
 }

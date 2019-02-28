@@ -9,6 +9,8 @@ namespace mullak99.ACW.NetworkACW.LCHLib
 {
     public class LCH
     {
+        public const string LCH_HeaderContent = "mullak99\r\n556176\r\n201710338\r\n";
+
         public LCH()
         {
 
