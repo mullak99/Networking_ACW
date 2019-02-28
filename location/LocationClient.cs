@@ -111,16 +111,16 @@ namespace mullak99.ACW.NetworkACW.location
                     CommandGetLocation cmd = (CommandGetLocation)command;
 
                     bool ok = cmd.ResolveResponse(data);
-                    Program.logging.Log(cmd.ToString());
+                    Program.logging.Log(cmd.ToString(), 1, true);
                 }
                 else if (command.GetType() == typeof(CommandSetLocation))
                 {
                     CommandSetLocation cmd = (CommandSetLocation)command;
 
                     if (cmd.ResolveResponse(data))
-                        Program.logging.Log(String.Format("{0} location changed to be {1}", cmd.GetPersonID(), cmd.GetLocation()));
+                        Program.logging.Log(String.Format("{0} location changed to be {1}", cmd.GetPersonID(), cmd.GetLocation()), 1, true);
                     else
-                        Program.logging.Log(String.Format("ERROR: An unexpected error occured while changing {0}'s location!", cmd.GetPersonID()));
+                        Program.logging.Log(String.Format("ERROR: An unexpected error occured while changing {0}'s location!", cmd.GetPersonID()), 1, true);
                 }
                 else Program.logging.Log(data);
             }

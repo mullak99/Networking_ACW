@@ -17,30 +17,54 @@ namespace mullak99.ACW.NetworkACW.LCHLib
             _isDebug = isDebugMode;
         }
 
-        public void Log(string log, int severity = 1)
+        public void Log(string log, int severity = 1, bool rawOutput = false)
         {
-            if (severity == 0 && _isDebug)
+            if (_isDebug)
             {
-                IntLog(String.Format("[{0} DEBUG] {1}", CurrentTime(), log));
+                if (severity == 0)
+                {
+                    IntLog(String.Format("[{0} DEBUG] {1}", CurrentTime(), log));
+                }
+                if (severity == 1)
+                {
+                    IntLog(String.Format("[{0} INFO] {1}", CurrentTime(), log));
+                }
+                else if (severity == 2)
+                {
+                    IntLog(String.Format("[{0} WARN] {1}", CurrentTime(), log));
+                }
+                else if (severity == 3)
+                {
+                    IntLog(String.Format("[{0} ERROR] {1}", CurrentTime(), log));
+                }
             }
-            if (severity == 1)
+            else
             {
-                IntLog(String.Format("[{0} INFO] {1}", CurrentTime(), log));
+                if (rawOutput) IntLog(log, false, true);
+                if (severity == 0 && _isDebug)
+                {
+                    IntLog(String.Format("[{0} DEBUG] {1}", CurrentTime(), log), rawOutput);
+                }
+                if (severity == 1)
+                {
+                    IntLog(String.Format("[{0} INFO] {1}", CurrentTime(), log), rawOutput);
+                }
+                else if (severity == 2)
+                {
+                    IntLog(String.Format("[{0} WARN] {1}", CurrentTime(), log), rawOutput);
+                }
+                else if (severity == 3)
+                {
+                    IntLog(String.Format("[{0} ERROR] {1}", CurrentTime(), log), rawOutput);
+                }
             }
-            else if (severity == 2)
-            {
-                IntLog(String.Format("[{0} WARN] {1}", CurrentTime(), log));
-            }
-            else if (severity == 3)
-            {
-                IntLog(String.Format("[{0} ERROR] {1}", CurrentTime(), log));
-            }
+            
         }
 
-        private void IntLog(string log)
+        private void IntLog(string log, bool skipWriteLine = false, bool skipFileAppend = false)
         {
-            Console.WriteLine(log);
-            if (!String.IsNullOrEmpty(_logPath))
+            if (!skipWriteLine) Console.WriteLine(log);
+            if (!String.IsNullOrEmpty(_logPath) && !skipFileAppend)
                 File.AppendAllText(_logPath, log + Environment.NewLine);
         }
 

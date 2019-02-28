@@ -36,6 +36,7 @@ namespace mullak99.ACW.NetworkACW.location
                     if (args[i].ToLower().TrimStart('/', '-') == "h" && !String.IsNullOrEmpty(args[i + 1])) // Server Address
                     {
                         _serverAddress = args[i + 1];
+                        if (_serverAddress == "localhost") _serverAddress = "127.0.0.1";
                         progArgs.Add(string.Join(" ", args[i], args[i + 1]));
                         i++;
                     }
