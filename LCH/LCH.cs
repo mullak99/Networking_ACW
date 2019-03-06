@@ -21,6 +21,11 @@ namespace mullak99.ACW.NetworkACW.LCHLib
             return CommandHandler.CommandFinder(commandString, protocol);
         }
 
+        public static Command ConvertClientRequestToCommand(string rawClientRequest, ref LCH.Protocol protocol)
+        {
+            return CommandHandler.CommandFinderServer(rawClientRequest, ref protocol);
+        }
+
         public enum Protocol
         {
             WHOIS,

@@ -110,8 +110,10 @@ namespace mullak99.ACW.NetworkACW.location
                 {
                     CommandGetLocation cmd = (CommandGetLocation)command;
 
-                    bool ok = cmd.ResolveResponse(data);
-                    Program.logging.Log(cmd.ToString(), 1, true);
+                    if (cmd.ResolveResponse(data))
+                        Program.logging.Log(cmd.ToString(), 1, true);
+                    else
+                        Program.logging.Log("ERROR: no entries found", 1, true);
                 }
                 else if (command.GetType() == typeof(CommandSetLocation))
                 {
@@ -126,7 +128,10 @@ namespace mullak99.ACW.NetworkACW.location
             }
             catch (IOException e)
             {
-                Program.logging.Log("Error: " + e.Message, 2);
+                if (e.Message.Contains("Unable to read data from the transport connection"))
+                    Program.logging.Log("Server failed to respond in time!", 2);
+                else
+                    Program.logging.Log("ERROR: " + e.Message, 2);
             }
         }
 

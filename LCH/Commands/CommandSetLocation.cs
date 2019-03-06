@@ -35,8 +35,8 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
                         string content = String.Format("name={0}&location={1}", _user.TrimEnd(' '), _location.TrimEnd(' '));
                         return String.Format("POST / HTTP/1.1\r\nHost: LocationClient-m99\r\nContent-Length: {0}\r\n{1}\r\n{2}", content.Length, LCH.LCH_HeaderContent, content);
                     }
-                default:
                 case LCH.Protocol.WHOIS:
+                default:
                     {
                         return String.Format("{0} {1}\r\n", _user, _location);
                     }
@@ -62,6 +62,10 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         {
             return _protocol;
         }
+        public void SetProtocol(LCH.Protocol protocol)
+        {
+            _protocol = protocol;
+        }
 
         public override string ToString()
         {
@@ -81,33 +85,83 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
                         string[] dataLines = data.Replace("\r", "").Split('\n');
                         if (dataLines[0] == "HTTP/0.9 200 OK")
                             return true;
-                        else
-                            return false;
+
+                        return false;
                     }
                 case LCH.Protocol.HTTP10:
                     {
                         string[] dataLines = data.Replace("\r", "").Split('\n');
                         if (dataLines[0] == "HTTP/1.0 200 OK")
                             return true;
-                        else
-                            return false;
+
+                        return false;
                     }
                 case LCH.Protocol.HTTP11:
                     {
                         string[] dataLines = data.Replace("\r", "").Split('\n');
                         if (dataLines[0] == "HTTP/1.1 200 OK")
                             return true;
-                        else
-                            return false;
+
+                        return false;
                     }
-                default:
                 case LCH.Protocol.WHOIS:
+                default:
                     {
                         if (!String.IsNullOrEmpty(data) && !data.StartsWith("ERROR"))
                             return true;
-                        else
-                            return false;
+
+                        return false;
                     }
+            }
+        }
+
+        public string RespondToClient(bool success = true)
+        {
+            if (success)
+            {
+                switch (_protocol)
+                {
+                    case LCH.Protocol.HTTP09:
+                        {
+                            return String.Format("HTTP/0.9 200 OK\r\nContent-Type: text/plain\r\n\r\n");
+                        }
+                    case LCH.Protocol.HTTP10:
+                        {
+                            return String.Format("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n");
+                        }
+                    case LCH.Protocol.HTTP11:
+                        {
+                            return String.Format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n{0}\r\n", LCH.LCH_HeaderContent);
+                        }
+                    case LCH.Protocol.WHOIS:
+                    default:
+                        {
+                            return "OK";
+                        }
+                }
+            }
+            else
+            {
+                switch (_protocol)
+                {
+                    case LCH.Protocol.HTTP09:
+                        {
+                            return String.Format("HTTP/0.9 404 Not Found\r\nContent-Type: text/plain\r\n\r\n");
+                        }
+                    case LCH.Protocol.HTTP10:
+                        {
+                            return String.Format("HTTP/1.0 404 Not Found\r\nContent-Type: text/plain\r\n\r\n");
+                        }
+                    case LCH.Protocol.HTTP11:
+                        {
+                            return String.Format("HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n{0}\r\n", LCH.LCH_HeaderContent);
+                        }
+                    case LCH.Protocol.WHOIS:
+                    default:
+                        {
+                            return String.Format("ERROR: Could not add '{0}' to location '{1}' in the database! Please contact the server operator for more information!", GetPersonID(), GetLocation());
+                        }
+                }
             }
         }
     }

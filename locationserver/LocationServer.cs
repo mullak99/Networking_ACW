@@ -74,11 +74,14 @@ namespace mullak99.ACW.NetworkACW.locationserver
             int bytesRead = netStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
             string recievedMessage = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead).TrimEnd('\n', '\r');
 
-            Program.logging.Log("Received: " + recievedMessage);
+            Program.logging.Log("Received: " + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
 
-            string returnMessage = ExecuteCommand(LCH.ConvertStringToCommand(recievedMessage));
+            LCH.Protocol protocol = LCH.Protocol.WHOIS;
+            Command command = LCH.ConvertClientRequestToCommand(recievedMessage, ref protocol);
 
-            Program.logging.Log("Sending: " + returnMessage);
+            string returnMessage = ExecuteCommand(command, protocol);
+
+            Program.logging.Log(String.Format("Sending (Protocol={0}): {1}", command.GetProtocol().ToString(), returnMessage.Replace("\r\n", "<CR><LF>")));
 
             byte[] dataBytes = ASCIIEncoding.ASCII.GetBytes(returnMessage);
             netStream.Write(dataBytes, 0, dataBytes.Length);
@@ -87,36 +90,36 @@ namespace mullak99.ACW.NetworkACW.locationserver
             client.Close();
         }
 
-        private string ExecuteCommand(Command command)
+        private string ExecuteCommand(Command command, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
             List<string> args = command.GetArguments();
 
             if (command.GetType() == typeof(CommandGetLocation))
             {
                 CommandGetLocation getLocation = (CommandGetLocation)command;
-                Program.logging.Log("CommandGetLocation: " + string.Join(" ", getLocation.GetArguments()), 0);
+
+                getLocation.SetProtocol(protocol);
+                Program.logging.Log(String.Format("CommandGetLocation (Protocol={0}): {1}", getLocation.GetProtocol().ToString(), string.Join(" ", getLocation.GetArguments())));
 
                 PersonLocation pLocation = Program.locations.GetPersonLocation(getLocation.GetPersonID());
 
-                if (pLocation != null)
-                    return pLocation.GetPersonLocation();
-                else
-                    return "ERROR: no entries found";
+                if (pLocation != null) getLocation.SetLocation(pLocation.GetPersonLocation());
+
+                return getLocation.RespondToClient();
+
             }
             else if (command.GetType() == typeof(CommandSetLocation))
             {
                 CommandSetLocation setLocation = (CommandSetLocation)command;
-                Program.logging.Log("CommandSetLocation: " + string.Join(" ", setLocation.GetArguments()), 0);
 
-                bool success = Program.locations.AddPersonLocation(new PersonLocation(setLocation.GetPersonID(), setLocation.GetLocation()));
+                setLocation.SetProtocol(protocol);
+                Program.logging.Log(String.Format("CommandSetLocation (Protocol={0}): {1}", setLocation.GetProtocol().ToString(), string.Join(" ", setLocation.GetArguments())));
 
-                if (success)
-                    return "OK";
-                else
-                    return String.Format("ERROR: Could not add '{0}' to location '{1}' in the database! Please contact the server operator for more information!", setLocation.GetPersonID(), setLocation.GetLocation());
+                bool success = Program.locations.AddPersonLocation(new PersonLocation(setLocation.GetPersonID(), setLocation.GetLocation()), true);
+
+                return setLocation.RespondToClient(success);
             }
-            else
-                return "ERROR: an unexpected error occured!";
+            return "ERROR: an unexpected error occured!";
         }
 
         public void Close()

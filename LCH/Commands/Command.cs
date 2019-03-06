@@ -11,8 +11,10 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         string ComposeCommand();
         string GetPersonID();
         string GetLocation();
+        void SetProtocol(LCH.Protocol protocol);
         LCH.Protocol GetProtocol();
         bool ResolveResponse(string data);
         List<string> GetArguments();
+        string RespondToClient(bool success);
     }
 }
