@@ -40,15 +40,12 @@ and respond to get/set requests from the Client.
 
 ### Usage
 
-To take full advantage of the server you will need to use the commandline.  
+The server can be launched by running the `locationserver.exe` file. Although
+to take full advantage of the server it will need to be ran through the
+commandline and provided with launch parameters.  
 Once the commandline is open the server can be used like so:
 
-- Launch Server with Database path: `locationserver.exe -f <path>`
-
-Advanced command line options can also be appended to the above command
-examples.
-
-Example: `location.exe <person> <parameter(s)>`
+Example: `locationserver.exe <parameter(s)>`
 
 The full list of possible argument are as follows:
 
