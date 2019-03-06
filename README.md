@@ -40,8 +40,8 @@ and respond to get/set requests from the Client.
 
 ### Usage
 
-To take full advantage of the client you will need to use the commandline.  
-Once the commandline is open the client can be used like so:
+To take full advantage of the server you will need to use the commandline.  
+Once the commandline is open the server can be used like so:
 
 - Launch Server with Database path: `locationserver.exe -f <path>`
 
