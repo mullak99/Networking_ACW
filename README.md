@@ -43,8 +43,7 @@ and respond to get/set requests from the Client.
 To take full advantage of the client you will need to use the commandline.  
 Once the commandline is open the client can be used like so:
 
-- Get Person Location: `location.exe <person>`
-- Set Person Location: `location.exe <person> <location>`
+- Launch Server with Database path: `locationserver.exe -f <path>`
 
 Advanced command line options can also be appended to the above command
 examples.
