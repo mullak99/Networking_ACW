@@ -71,7 +71,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         {
             if (!String.IsNullOrEmpty(_user) && !String.IsNullOrEmpty(_location))
             {
-                return String.Format("{0} is {1}", _user, _location);
+                return String.Format("{0} is {1}", _user.TrimEnd(' '), _location.TrimEnd(' '));
             }
             else return null;
         }

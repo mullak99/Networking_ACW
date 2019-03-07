@@ -113,25 +113,22 @@ namespace mullak99.ACW.NetworkACW.location
                     if (cmd.ResolveResponse(data))
                         Program.logging.Log(cmd.ToString(), 1, true);
                     else
-                        Program.logging.Log("ERROR: no entries found", 1, true);
+                        Program.logging.Log("ERROR: no entries found\r\n", 1, true);
                 }
                 else if (command.GetType() == typeof(CommandSetLocation))
                 {
                     CommandSetLocation cmd = (CommandSetLocation)command;
 
                     if (cmd.ResolveResponse(data))
-                        Program.logging.Log(String.Format("{0} location changed to be {1}", cmd.GetPersonID(), cmd.GetLocation()), 1, true);
+                        Program.logging.Log(String.Format("{0} location changed to be {1}\r\n", cmd.GetPersonID().TrimEnd(' '), cmd.GetLocation().TrimEnd(' ')), 1, true);
                     else
-                        Program.logging.Log(String.Format("ERROR: An unexpected error occured while changing {0}'s location!", cmd.GetPersonID()), 1, true);
+                        Program.logging.Log(String.Format("ERROR: An unexpected error occured while changing {0}'s location!\r\n", cmd.GetPersonID().TrimEnd(' ')), 1, true);
                 }
                 else Program.logging.Log(data);
             }
             catch (IOException e)
             {
-                if (e.Message.Contains("Unable to read data from the transport connection"))
-                    Program.logging.Log("Server failed to respond in time!", 2);
-                else
-                    Program.logging.Log("ERROR: " + e.Message, 2);
+                Program.logging.Log("Server failed to respond in time!", 2);
             }
         }
 

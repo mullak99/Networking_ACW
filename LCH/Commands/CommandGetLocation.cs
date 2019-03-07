@@ -79,7 +79,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
             }
             else if (!String.IsNullOrEmpty(_user) && !String.IsNullOrEmpty(_location))
             {
-                return String.Format("{0} is {1}", _user, _location);
+                return String.Format("{0} is {1}\r\n", _user.TrimEnd(' '), _location.TrimEnd(' '));
             }
             else return null;
         }
@@ -144,15 +144,15 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
                 {
                     case LCH.Protocol.HTTP09:
                         {
-                            return String.Format("HTTP/0.9 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", _location);
+                            return String.Format("HTTP/0.9 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", _location.TrimEnd(' '));
                         }
                     case LCH.Protocol.HTTP10:
                         {
-                            return String.Format("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", _location);
+                            return String.Format("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", _location.TrimEnd(' '));
                         }
                     case LCH.Protocol.HTTP11:
                         {
-                            return String.Format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n{1}\r\n{0}\r\n", _location, LCH.LCH_HeaderContent);
+                            return String.Format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n{1}\r\n{0}\r\n", _location.TrimEnd(' '), LCH.LCH_HeaderContent);
                         }
                     case LCH.Protocol.WHOIS:
                     default:

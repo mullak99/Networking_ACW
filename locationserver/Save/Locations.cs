@@ -18,7 +18,11 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
         {
             _dbPath = databaseFilePath;
 
-            if (File.Exists(_dbPath)) ImportFromDB();
+            if (!String.IsNullOrEmpty(_dbPath))
+            {
+                if (File.Exists(_dbPath)) ImportFromDB();
+                ExportToDB();
+            }
         }
 
         public bool AddPersonLocation(PersonLocation personLocation, bool useSetOnFail = false)
