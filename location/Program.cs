@@ -24,6 +24,9 @@ namespace mullak99.ACW.NetworkACW.location
         private static LCH.Protocol _protocol = LCH.Protocol.WHOIS;
 
         private static bool _verbose = false;
+        private static bool _showVer = false;
+
+        private const bool _isDevBuild = true;
 
         [STAThread]
         static void Main(string[] args)
@@ -76,6 +79,11 @@ namespace mullak99.ACW.NetworkACW.location
                         _verbose = true;
                         progArgs.Add(args[i]);
                     }
+                    else if (args[i].ToLower().TrimStart('/', '-') == "v" || args[i].ToLower().TrimStart('/', '-') == "version") // Show Version
+                    {
+                        _showVer = true;
+                        progArgs.Add(args[i]);
+                    }
                     else progArgs.Add(args[i]);
                 }
                 else
@@ -99,30 +107,48 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 AllocConsole();
 
-                try
+                if (_showVer)
                 {
-                    LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0], _serverPort, _timeOut);
-
-                    location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs), _protocol));
-
-                    location.Close();
-
-                    if (GetDebug())
-                        Console.ReadKey();
+                    Console.WriteLine("LocationClient " + GetVersion(true));
                 }
-                catch (SocketException)
+                else
                 {
-                    logging.Log(String.Format("'{0}' is not an address!", _serverAddress), 2);
+                    try
+                    {
+                        LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0], _serverPort, _timeOut);
+
+                        location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs), _protocol));
+
+                        location.Close();
+
+                        if (GetDebug())
+                            Console.ReadKey();
+                    }
+                    catch (SocketException)
+                    {
+                        logging.Log(String.Format("'{0}' is not an address!", _serverAddress), 2);
+                    }
                 }
-                
             }
         }
 
-        public static string GetVersion()
+        public static string GetVersion(bool incBuildDate = false)
         {
-            string[] ver = (typeof(location.Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
+            #pragma warning disable 0162
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = new DateTime(2019, 3, 9).AddDays(version.Build).AddSeconds(version.MinorRevision * 2);
 
-            return "v" + ver[0] + "." + ver[1] + "." + ver[2];
+            if (_isDevBuild)
+            {
+                if (incBuildDate) return String.Format("v{0}.{1}.{2}-{3} ({4})", version.Major, version.Minor, version.MajorRevision, version.MinorRevision, buildDate);
+                else return String.Format("v{0}.{1}.{2}-{3}", version.Major, version.Minor, version.MajorRevision, version.MinorRevision);
+            }
+            else
+            {
+                if (incBuildDate) return String.Format("v{0}.{1}.{2} ({3})", version.Major, version.Minor, version.MajorRevision, buildDate);
+                else return String.Format("v{0}.{1}.{2}", version.Major, version.Minor, version.MajorRevision);
+            }
+            #pragma warning restore 0162
         }
 
         public static bool GetDebug()

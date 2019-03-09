@@ -29,6 +29,7 @@ The full list of possible argument are as follows:
 - `-h0`: Use the HTTP/1.0 protocol for requests
 - `-h1`: Use the HTTP/1.0 protocol for requests
 - `-d`: Enable debug mode (verbosely shows what the client is doing)
+- `-v`: Outputs the current version and build date of LocationClient to Console
 
 P.S: If multiple `-hX` parameters are provided, only the last one will be used.  
 P.S.S: By default the client uses the WHOIS protocol.
@@ -54,6 +55,7 @@ The full list of possible argument are as follows:
 - `-f <path>`: Path of the database file to save peoples names and locations
 - `-d`: Enable debug mode (verbosely shows what the client is doing)
 - `-w`: Opens the server in a WindowsForms window
+- `-v`: Outputs the current version and build date of LocationServer to Console
 
 P.S: If a `-f <path>` isn't provided the locations will only be stores in memory
 and will be deleted on server close.  

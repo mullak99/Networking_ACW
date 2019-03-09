@@ -15,10 +15,13 @@ namespace mullak99.ACW.NetworkACW.locationserver
         private static int _port = 43;
 
         private static bool _verbose = false;
+        private static bool _showVer = false;
 
         internal static Logging logging;
         private static string _logFile;
         private static string _dbFile;
+
+        private const bool _isDevBuild = true;
 
         /// <summary>
         /// The main entry point for the application.
@@ -34,6 +37,8 @@ namespace mullak99.ACW.NetworkACW.locationserver
                     _UI = true;
                 else if (args[i].ToLower().TrimStart('/', '-') == "d" || args[i].ToLower().TrimStart('/', '-') == "debug" || args[i].ToLower().TrimStart('/', '-') == "verbose") // Debug Mode
                     _verbose = true;
+                else if (args[i].ToLower().TrimStart('/', '-') == "v" || args[i].ToLower().TrimStart('/', '-') == "version") // Show Version
+                    _showVer = true;
                 else if (args[i].ToLower().TrimStart('/', '-') == "l" && !String.IsNullOrEmpty(args[i + 1])) // Log File Path
                 {
                     _logFile = args[i + 1];
@@ -59,18 +64,39 @@ namespace mullak99.ACW.NetworkACW.locationserver
             else
             {
                 AllocConsole();
-                LocationServer server = new LocationServer(_port);
 
-                if (GetDebug())
-                    Console.ReadKey();
+                if (_showVer)
+                {
+                    Console.WriteLine("LocationServer " + GetVersion(true));
+                }
+                else
+                {
+                    LocationServer server = new LocationServer(_port);
+
+                    if (GetDebug())
+                        Console.ReadKey();
+                }
+                
             }
         }
 
-        public static string GetVersion()
+        public static string GetVersion(bool incBuildDate = false)
         {
-            string[] ver = (typeof(locationserver.Program).Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version).Split('.');
+            #pragma warning disable 0162
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = new DateTime(2019, 3, 9).AddDays(version.Build).AddSeconds(version.MinorRevision * 2);
 
-            return "v" + ver[0] + "." + ver[1] + "." + ver[2];
+            if (_isDevBuild)
+            {
+                if (incBuildDate) return String.Format("v{0}.{1}.{2}-{3} ({4})", version.Major, version.Minor, version.MajorRevision, version.MinorRevision, buildDate);
+                else return String.Format("v{0}.{1}.{2}-{3}", version.Major, version.Minor, version.MajorRevision, version.MinorRevision);
+            }
+            else
+            {
+                if (incBuildDate) return String.Format("v{0}.{1}.{2} ({3})", version.Major, version.Minor, version.MajorRevision, buildDate);
+                else return String.Format("v{0}.{1}.{2}", version.Major, version.Minor, version.MajorRevision);
+            }
+            #pragma warning restore 0162
         }
 
         public static bool GetDebug()
