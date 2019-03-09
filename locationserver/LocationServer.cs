@@ -20,7 +20,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         private bool _connected = false;
 
-        public LocationServer(int port = 43, bool runAsync = true)
+        public LocationServer(int port = 43)
         {
             Program.logging.Log(String.Format("Starting LocationServer {0}...", Program.GetVersion()));
 
@@ -28,10 +28,9 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 Program.logging.Log(String.Format("Debug Mode Enabled!", Program.GetVersion()), 0);
 
             _port = port;
-
             _listener = new TcpListener(_ip, _port);
 
-            StartListener();
+            Task.Run(() => StartListener());
         }
 
         private void StartListener()
@@ -50,8 +49,6 @@ namespace mullak99.ACW.NetworkACW.locationserver
             }
             catch (SocketException e)
             {
-                _connected = false;
-
                 if (e.ToString().Contains("Only one usage of each socket address"))
                     Program.logging.Log(String.Format("An existing server is already running on this port ({0})!", _port), 2);
                 else
@@ -59,8 +56,11 @@ namespace mullak99.ACW.NetworkACW.locationserver
             }
             catch (Exception e)
             {
-                _connected = false;
                 Program.logging.Log("An unexpected exception occured on StartListener. Exception: " + e.ToString(), 3);
+            }
+            finally
+            {
+                _connected = false;
             }
         }
 
@@ -98,7 +98,6 @@ namespace mullak99.ACW.NetworkACW.locationserver
             {
                 CommandGetLocation getLocation = (CommandGetLocation)command;
 
-                getLocation.SetProtocol(protocol);
                 Program.logging.Log(String.Format("CommandGetLocation (Protocol={0}): {1}", getLocation.GetProtocol().ToString(), string.Join(" ", getLocation.GetArguments())));
 
                 PersonLocation pLocation = Program.locations.GetPersonLocation(getLocation.GetPersonID());
@@ -112,12 +111,9 @@ namespace mullak99.ACW.NetworkACW.locationserver
             {
                 CommandSetLocation setLocation = (CommandSetLocation)command;
 
-                setLocation.SetProtocol(protocol);
                 Program.logging.Log(String.Format("CommandSetLocation (Protocol={0}): {1}", setLocation.GetProtocol().ToString(), string.Join(" ", setLocation.GetArguments())));
 
-                bool success = Program.locations.AddPersonLocation(new PersonLocation(setLocation.GetPersonID(), setLocation.GetLocation()), true);
-
-                return setLocation.RespondToClient(success);
+                return setLocation.RespondToClient(Program.locations.AddPersonLocation(new PersonLocation(setLocation.GetPersonID(), setLocation.GetLocation()), true));
             }
             return "ERROR: an unexpected error occured!";
         }

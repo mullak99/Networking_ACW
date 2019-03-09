@@ -15,8 +15,6 @@ namespace mullak99.ACW.NetworkACW.LCHLib
         {
             _logPath = logPath;
             _isDebug = isDebugMode;
-
-            this.Log("Logging Started!");
         }
 
         public void Log(string log, int severity = 1, bool rawOutput = false)

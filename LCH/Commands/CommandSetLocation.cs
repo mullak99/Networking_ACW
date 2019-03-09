@@ -62,10 +62,6 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         {
             return _protocol;
         }
-        public void SetProtocol(LCH.Protocol protocol)
-        {
-            _protocol = protocol;
-        }
 
         public override string ToString()
         {

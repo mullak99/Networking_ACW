@@ -12,9 +12,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib
         public const string LCH_HeaderContent = "mullak99\r\n556176\r\n201710338\r\n";
 
         public LCH()
-        {
-
-        }
+        { }
 
         public static Command ConvertStringToCommand(string commandString, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {

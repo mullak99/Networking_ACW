@@ -13,9 +13,7 @@ namespace mullak99.ACW.NetworkACW.location
         private bool _connected = false;
 
         private string _ip;
-        private int _port;
-
-        private int _timeOut;
+        private int _port, _timeOut;
 
         public LocationClient(IPAddress serverIpAddress, int serverPort, UInt16 timeOut = 2000)
         {
@@ -61,8 +59,6 @@ namespace mullak99.ACW.NetworkACW.location
                     wh.Close();
                 }
                 
-                //_client.Connect(_ip, _port);
-
                 Program.logging.Log(String.Format("Connected to server at '{0}:{1}'!", _ip, _port), 0);
                 _connected = true;
             }
@@ -113,7 +109,7 @@ namespace mullak99.ACW.NetworkACW.location
                     if (cmd.ResolveResponse(data))
                         Program.logging.Log(cmd.ToString(), 1, true);
                     else
-                        Program.logging.Log("ERROR: no entries found\r\n", 1, true);
+                        Program.logging.Log("ERROR: no entries found", 1, true);
                 }
                 else if (command.GetType() == typeof(CommandSetLocation))
                 {
@@ -126,7 +122,7 @@ namespace mullak99.ACW.NetworkACW.location
                 }
                 else Program.logging.Log(data);
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 Program.logging.Log("Server failed to respond in time!", 2);
             }
