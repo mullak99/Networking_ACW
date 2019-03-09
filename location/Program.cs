@@ -97,7 +97,7 @@ namespace mullak99.ACW.NetworkACW.location
 
             if (args.Length == 0)
             {
-                FreeConsole();
+                if (!IsLinux) FreeConsole();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -105,7 +105,7 @@ namespace mullak99.ACW.NetworkACW.location
             }
             else
             {
-                AllocConsole();
+                if (!IsLinux) AllocConsole();
 
                 if (_showVer)
                 {
@@ -168,5 +168,14 @@ namespace mullak99.ACW.NetworkACW.location
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool FreeConsole();
+
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
     }
 }
