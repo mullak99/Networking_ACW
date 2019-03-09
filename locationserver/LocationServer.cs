@@ -2,19 +2,18 @@
 using mullak99.ACW.NetworkACW.LCHLib.Commands;
 using mullak99.ACW.NetworkACW.locationserver.Save;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.locationserver
 {
     public class LocationServer
     {
         TcpListener _listener;
+        Thread _listenerThread;
+
         private IPAddress _ip = IPAddress.Any;
         private int _port;
 
@@ -22,15 +21,26 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         public LocationServer(int port = 43)
         {
-            Program.logging.Log(String.Format("Starting LocationServer {0}...", Program.GetVersion()));
-
-            if (Program.GetDebug())
-                Program.logging.Log(String.Format("Debug Mode Enabled!", Program.GetVersion()), 0);
-
             _port = port;
-            _listener = new TcpListener(_ip, _port);
 
-            Task.Run(() => StartListener());
+            Open();
+        }
+
+        public void Open()
+        {
+            if (!_connected)
+            {
+                Program.logging.Log(String.Format("Starting LocationServer {0}...", Program.GetVersion()));
+
+                if (Program.GetDebug())
+                    Program.logging.Log("Debug Mode Enabled!", 0);
+
+                _listener = new TcpListener(_ip, _port);
+
+                _listenerThread = new Thread(() => StartListener());
+                _listenerThread.Start();
+            }
+            else Program.logging.Log("LocationServer is already running!", 2);
         }
 
         private void StartListener()
@@ -44,7 +54,9 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 while (_connected)
                 {
                     Socket client = _listener.AcceptSocket();   
-                    Task.Run(() => HandleClient(client));
+
+                    Thread handleRequest = new Thread(() => HandleClient(client));
+                    handleRequest.Start();
                 }
             }
             catch (SocketException e)
@@ -92,8 +104,6 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         private string ExecuteCommand(Command command, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
-            List<string> args = command.GetArguments();
-
             if (command.GetType() == typeof(CommandGetLocation))
             {
                 CommandGetLocation getLocation = (CommandGetLocation)command;
@@ -105,7 +115,6 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 if (pLocation != null) getLocation.SetLocation(pLocation.GetPersonLocation());
 
                 return getLocation.RespondToClient();
-
             }
             else if (command.GetType() == typeof(CommandSetLocation))
             {
@@ -121,6 +130,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
         public void Close()
         {
             _connected = false;
+            _listenerThread.Abort();
             _listener.Stop();
         }
     }

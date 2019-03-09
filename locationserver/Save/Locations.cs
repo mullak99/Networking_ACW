@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.locationserver.Save
 {
@@ -96,7 +94,6 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
                 Program.logging.Log(String.Format("LocationsDB: '{0}' is not a valid database! Loading aborted", _dbPath), 2);
                 return false;
             }
-            //Program.logging.Log(String.Format("LocationsDB: Database path not provided! Loading aborted"), 2);
             return false;
         }
 
@@ -110,7 +107,6 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
                 Program.logging.Log(String.Format("LocationsDB: Exporting Locations to '{0}'...", _dbPath), 0);
                 _dataBase.SaveDB(_peopleLocations);
             }
-            //else Program.logging.Log(String.Format("LocationsDB: Database path not provided! Saving aborted"), 2);
         }
     }
 
@@ -132,11 +128,6 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
         public string GetPersonLocation()
         {
             return _personLocation;
-        }
-
-        public void SetPersonID(string personID)
-        {
-            _personID = personID;
         }
 
         public void SetPersonLocation(string personLocation)

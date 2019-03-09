@@ -63,7 +63,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib
 
         private void IntLog(string log, bool skipWriteLine = false, bool skipFileAppend = false)
         {
-            if (!skipWriteLine) Console.WriteLine(log);
+            if (!skipWriteLine) Console.WriteLine(log.TrimEnd('\r', '\n'));
             if (!String.IsNullOrEmpty(_logPath) && !skipFileAppend)
                 File.AppendAllText(_logPath, log + Environment.NewLine);
         }
