@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -83,8 +84,8 @@ namespace mullak99.ACW.NetworkACW.locationserver
         public static string GetVersion(bool incBuildDate = false)
         {
             #pragma warning disable 0162
-            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2019, 3, 9).AddDays(version.Build).AddSeconds(version.MinorRevision * 2);
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = GetLinkerTime(Assembly.GetExecutingAssembly());
 
             if (_isDevBuild)
             {
@@ -129,6 +130,29 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 int p = (int)Environment.OSVersion.Platform;
                 return (p == 4) || (p == 6) || (p == 128);
             }
+        }
+
+        public static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        {
+            var filePath = assembly.Location;
+            const int c_PeHeaderOffset = 60;
+            const int c_LinkerTimestampOffset = 8;
+
+            var buffer = new byte[2048];
+
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                stream.Read(buffer, 0, 2048);
+
+            var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+
+            var tz = target ?? TimeZoneInfo.Local;
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+
+            return localTime;
         }
     }
 }
