@@ -36,7 +36,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod
                 if (!AddPersonLocation(pLoc)) SetPersonLocation(pLoc);
             }
 
-            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' people(s) locations", personLocations.Count, "SQLite"), 0);
+            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' person(s) location(s)", personLocations.Count, "SQLite"), 0);
         }
 
         private bool CreateSQLiFile()
@@ -110,7 +110,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod
                     pLocs.Add(new PersonLocation((string)reader[0], (string)reader[1]));
                 }
             }
-            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Loaded '{0}' people(s) locations", pLocs.Count, "SQLite"), 0);
+            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Loaded '{0}' person(s) location(s)", pLocs.Count, "SQLite"), 0);
 
             return pLocs;
         }

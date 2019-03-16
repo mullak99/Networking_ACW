@@ -29,7 +29,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod
 
                     personLocations.Add(new PersonLocation(splitPersonLoc[0], splitPersonLoc[1]));
                 }
-                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Loaded '{0}' people(s) locations", personLocations.Count, "TextFile"), 0);
+                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Loaded '{0}' person(s) location(s)", personLocations.Count, "TextFile"), 0);
 
                 return personLocations;
             }
@@ -50,7 +50,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod
                 }
                 File.WriteAllLines(_dbPath, formattedPersonLoc.ToArray(), Encoding.UTF8);
 
-                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' people(s) location(s)", formattedPersonLoc.Count, "TextFile"), 0);
+                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' person(s) location(s)", formattedPersonLoc.Count, "TextFile"), 0);
             }
             catch
             {
