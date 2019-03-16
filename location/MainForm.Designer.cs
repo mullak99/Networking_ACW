@@ -1,6 +1,6 @@
 ﻿namespace mullak99.ACW.NetworkACW.location
 {
-    partial class Form1
+    partial class LocationClientForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,13 +28,160 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.titleBar = new System.Windows.Forms.Panel();
+            this.titleLabel = new System.Windows.Forms.Label();
+            this.quitButton = new System.Windows.Forms.Button();
+            this.sidePanel = new System.Windows.Forms.Panel();
+            this.copyrightLabel = new System.Windows.Forms.Label();
+            this.settingsMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
+            this.setLocationMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
+            this.getLocationMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
+            this.connectMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
+            this.titleBar.SuspendLayout();
+            this.sidePanel.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // titleBar
+            // 
+            this.titleBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.titleBar.Controls.Add(this.titleLabel);
+            this.titleBar.Controls.Add(this.quitButton);
+            this.titleBar.Location = new System.Drawing.Point(0, 0);
+            this.titleBar.Name = "titleBar";
+            this.titleBar.Size = new System.Drawing.Size(800, 25);
+            this.titleBar.TabIndex = 1;
+            this.titleBar.Paint += new System.Windows.Forms.PaintEventHandler(this.TitleBar_Paint);
+            this.titleBar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TitleBar_MouseDown);
+            // 
+            // titleLabel
+            // 
+            this.titleLabel.BackColor = System.Drawing.Color.Transparent;
+            this.titleLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.ForeColor = System.Drawing.SystemColors.Control;
+            this.titleLabel.Location = new System.Drawing.Point(3, 1);
+            this.titleLabel.Name = "titleLabel";
+            this.titleLabel.Size = new System.Drawing.Size(337, 25);
+            this.titleLabel.TabIndex = 1;
+            this.titleLabel.Text = "LocationClient ";
+            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.titleLabel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TitleBar_MouseDown);
+            // 
+            // quitButton
+            // 
+            this.quitButton.BackColor = System.Drawing.Color.Transparent;
+            this.quitButton.FlatAppearance.BorderSize = 0;
+            this.quitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.quitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.quitButton.ForeColor = System.Drawing.Color.LightGray;
+            this.quitButton.Location = new System.Drawing.Point(777, 1);
+            this.quitButton.Name = "quitButton";
+            this.quitButton.Size = new System.Drawing.Size(23, 23);
+            this.quitButton.TabIndex = 1;
+            this.quitButton.Text = "✖";
+            this.quitButton.UseVisualStyleBackColor = false;
+            this.quitButton.Click += new System.EventHandler(this.QuitButton_Click);
+            this.quitButton.MouseEnter += new System.EventHandler(this.QuitButton_MouseEnter);
+            this.quitButton.MouseLeave += new System.EventHandler(this.QuitButton_MouseLeave);
+            // 
+            // sidePanel
+            // 
+            this.sidePanel.BackColor = System.Drawing.Color.Gray;
+            this.sidePanel.Controls.Add(this.settingsMenuButton);
+            this.sidePanel.Controls.Add(this.setLocationMenuButton);
+            this.sidePanel.Controls.Add(this.getLocationMenuButton);
+            this.sidePanel.Controls.Add(this.connectMenuButton);
+            this.sidePanel.Controls.Add(this.copyrightLabel);
+            this.sidePanel.Location = new System.Drawing.Point(0, 24);
+            this.sidePanel.Name = "sidePanel";
+            this.sidePanel.Size = new System.Drawing.Size(149, 426);
+            this.sidePanel.TabIndex = 2;
+            this.sidePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.SidePanel_Paint);
+            // 
+            // copyrightLabel
+            // 
+            this.copyrightLabel.BackColor = System.Drawing.Color.Transparent;
+            this.copyrightLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.copyrightLabel.ForeColor = System.Drawing.SystemColors.Control;
+            this.copyrightLabel.Location = new System.Drawing.Point(3, 383);
+            this.copyrightLabel.Name = "copyrightLabel";
+            this.copyrightLabel.Size = new System.Drawing.Size(143, 37);
+            this.copyrightLabel.TabIndex = 2;
+            this.copyrightLabel.Text = "Apache 2.0 - 2019\r\nmullak99";
+            this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // settingsMenuButton
+            // 
+            this.settingsMenuButton.BackColor = System.Drawing.Color.Transparent;
+            this.settingsMenuButton.Location = new System.Drawing.Point(1, 245);
+            this.settingsMenuButton.Name = "settingsMenuButton";
+            this.settingsMenuButton.Selected = false;
+            this.settingsMenuButton.Size = new System.Drawing.Size(147, 66);
+            this.settingsMenuButton.TabIndex = 6;
+            this.settingsMenuButton.Text = "Settings";
+            this.settingsMenuButton.Click += new System.EventHandler(this.SettingsMenuButton_Click);
+            // 
+            // setLocationMenuButton
+            // 
+            this.setLocationMenuButton.BackColor = System.Drawing.Color.Transparent;
+            this.setLocationMenuButton.Location = new System.Drawing.Point(1, 177);
+            this.setLocationMenuButton.Name = "setLocationMenuButton";
+            this.setLocationMenuButton.Selected = false;
+            this.setLocationMenuButton.Size = new System.Drawing.Size(147, 66);
+            this.setLocationMenuButton.TabIndex = 5;
+            this.setLocationMenuButton.Text = "Set Location";
+            this.setLocationMenuButton.Click += new System.EventHandler(this.SetLocationMenuButton_Click);
+            // 
+            // getLocationMenuButton
+            // 
+            this.getLocationMenuButton.BackColor = System.Drawing.Color.Transparent;
+            this.getLocationMenuButton.Location = new System.Drawing.Point(1, 111);
+            this.getLocationMenuButton.Name = "getLocationMenuButton";
+            this.getLocationMenuButton.Selected = false;
+            this.getLocationMenuButton.Size = new System.Drawing.Size(147, 66);
+            this.getLocationMenuButton.TabIndex = 4;
+            this.getLocationMenuButton.Text = "Get Location";
+            this.getLocationMenuButton.Click += new System.EventHandler(this.GetLocationMenuButton_Click);
+            // 
+            // connectMenuButton
+            // 
+            this.connectMenuButton.BackColor = System.Drawing.Color.Transparent;
+            this.connectMenuButton.Location = new System.Drawing.Point(1, 45);
+            this.connectMenuButton.Name = "connectMenuButton";
+            this.connectMenuButton.Selected = true;
+            this.connectMenuButton.Size = new System.Drawing.Size(147, 66);
+            this.connectMenuButton.TabIndex = 3;
+            this.connectMenuButton.Text = "Connect";
+            this.connectMenuButton.Click += new System.EventHandler(this.ConnectMenuButton_Click);
+            // 
+            // LocationClientForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.Controls.Add(this.sidePanel);
+            this.Controls.Add(this.titleBar);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
+            this.Name = "LocationClientForm";
+            this.Text = "LocationClient";
+            this.titleBar.ResumeLayout(false);
+            this.sidePanel.ResumeLayout(false);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel titleBar;
+        private System.Windows.Forms.Label titleLabel;
+        private System.Windows.Forms.Button quitButton;
+        private System.Windows.Forms.Panel sidePanel;
+        private System.Windows.Forms.Label copyrightLabel;
+        private LCHLib.mUI.CustomControls.SubMenuButton connectMenuButton;
+        private LCHLib.mUI.CustomControls.SubMenuButton settingsMenuButton;
+        private LCHLib.mUI.CustomControls.SubMenuButton setLocationMenuButton;
+        private LCHLib.mUI.CustomControls.SubMenuButton getLocationMenuButton;
     }
 }
 

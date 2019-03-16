@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -97,15 +98,21 @@ namespace mullak99.ACW.NetworkACW.location
 
             if (args.Length == 0)
             {
-                FreeConsole();
+                if (!IsLinux)
+                {
+                    var handle = GetConsoleWindow();
+
+                    FreeConsole();
+                    ShowWindow(handle, SW_HIDE);
+                }
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new Form1());
+                Application.Run(new LocationClientForm());
             }
             else
             {
-                AllocConsole();
+                if (!IsLinux) AllocConsole();
 
                 if (_showVer)
                 {
@@ -120,7 +127,6 @@ namespace mullak99.ACW.NetworkACW.location
                         location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs), _protocol));
 
                         location.Close();
-
                         if (GetDebug())
                             Console.ReadKey();
                     }
@@ -135,18 +141,18 @@ namespace mullak99.ACW.NetworkACW.location
         public static string GetVersion(bool incBuildDate = false)
         {
             #pragma warning disable 0162
-            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2019, 3, 9).AddDays(version.Build).AddSeconds(version.MinorRevision * 2);
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = GetLinkerTime(Assembly.GetExecutingAssembly());
 
             if (_isDevBuild)
             {
-                if (incBuildDate) return String.Format("v{0}.{1}.{2}-{3} ({4})", version.Major, version.Minor, version.MajorRevision, version.MinorRevision, buildDate);
-                else return String.Format("v{0}.{1}.{2}-{3}", version.Major, version.Minor, version.MajorRevision, version.MinorRevision);
+                if (incBuildDate) return String.Format("v{0}.{1}.{2}-{3} ({4})", version.Major, version.Minor, version.Build, version.Revision, buildDate);
+                else return String.Format("v{0}.{1}.{2}-{3}", version.Major, version.Minor, version.Build, version.Revision);
             }
             else
             {
-                if (incBuildDate) return String.Format("v{0}.{1}.{2} ({3})", version.Major, version.Minor, version.MajorRevision, buildDate);
-                else return String.Format("v{0}.{1}.{2}", version.Major, version.Minor, version.MajorRevision);
+                if (incBuildDate) return String.Format("v{0}.{1}.{2} ({3})", version.Major, version.Minor, version.Build, buildDate);
+                else return String.Format("v{0}.{1}.{2}", version.Major, version.Minor, version.Build);
             }
             #pragma warning restore 0162
         }
@@ -168,5 +174,46 @@ namespace mullak99.ACW.NetworkACW.location
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool FreeConsole();
+
+        public static bool IsLinux
+        {
+            get
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
+        public static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        {
+            var filePath = assembly.Location;
+            const int c_PeHeaderOffset = 60;
+            const int c_LinkerTimestampOffset = 8;
+
+            var buffer = new byte[2048];
+
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                stream.Read(buffer, 0, 2048);
+
+            var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+            var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+            var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+
+            var tz = target ?? TimeZoneInfo.Local;
+            var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+
+            return localTime;
+        }
     }
 }
