@@ -50,7 +50,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod
                 }
                 File.WriteAllLines(_dbPath, formattedPersonLoc.ToArray(), Encoding.UTF8);
 
-                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' peoples location(s)", formattedPersonLoc.Count, "TextFile"), 0);
+                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' people(s) location(s)", formattedPersonLoc.Count, "TextFile"), 0);
             }
             catch
             {
