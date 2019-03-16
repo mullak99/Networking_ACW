@@ -34,7 +34,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 if (args[i].ToLower().TrimStart('/', '-') == "p" && !String.IsNullOrEmpty(args[i + 1]) && int.TryParse(args[i + 1], out _port))
                     i++;
                 else if (args[i].ToLower().TrimStart('/', '-') == "w")
-                    _UI = true;
+                    _UI = false;
                 else if (args[i].ToLower().TrimStart('/', '-') == "d" || args[i].ToLower().TrimStart('/', '-') == "debug" || args[i].ToLower().TrimStart('/', '-') == "verbose") // Debug Mode
                     _verbose = true;
                 else if (args[i].ToLower().TrimStart('/', '-') == "v" || args[i].ToLower().TrimStart('/', '-') == "version") // Show Version

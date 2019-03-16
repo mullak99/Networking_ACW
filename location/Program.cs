@@ -97,11 +97,16 @@ namespace mullak99.ACW.NetworkACW.location
 
             if (args.Length == 0)
             {
+                /*
                 FreeConsole();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new Form1());
+                */
+                AllocConsole();
+
+                Console.WriteLine("GUI disabled in beta. Please provide launch arguments instead.");
             }
             else
             {
