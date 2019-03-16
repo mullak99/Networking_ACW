@@ -4,14 +4,14 @@ using System.Data.SQLite;
 using System.IO;
 using System.Text;
 
-namespace mullak99.ACW.NetworkACW.locationserver.Save
+namespace mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod
 {
-    internal class Database
+    internal class SQLite : Database
     {
         protected string _dbPath;
         protected SQLiteConnection _dbConnection;
 
-        internal Database(string path)
+        internal SQLite(string path)
         {
             _dbPath = path;
 
@@ -24,17 +24,19 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
                 CreateDbTable();
         }
 
-        internal List<PersonLocation> LoadDB()
+        public List<PersonLocation> LoadDB()
         {
             return GetAllPersonLocations();
         }
 
-        internal void SaveDB(List<PersonLocation> personLocations)
+        public void SaveDB(List<PersonLocation> personLocations)
         {
             foreach (PersonLocation pLoc in personLocations)
             {
                 if (!AddPersonLocation(pLoc)) SetPersonLocation(pLoc);
             }
+
+            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Saved '{0}' person(s) location(s)", personLocations.Count, "SQLite"), 0);
         }
 
         private bool CreateSQLiFile()
@@ -105,10 +107,11 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
             {
                 while (reader.Read())
                 {
-                    Program.logging.Log(String.Format("LocationsDB: Loaded '{0}' at location: '{1}'", (string)reader[0], (string)reader[1]), 0);
                     pLocs.Add(new PersonLocation((string)reader[0], (string)reader[1]));
                 }
             }
+            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Loaded '{0}' person(s) location(s)", pLocs.Count, "SQLite"), 0);
+
             return pLocs;
         }
 
