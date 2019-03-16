@@ -33,9 +33,9 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.0.0.<#= this.RevisionNumber #><#= this.RevisionNumberMin #>")]
-[assembly: AssemblyFileVersion("1.0.0.<#= this.RevisionNumber #><#= this.RevisionNumberMin #>")]
+[assembly: AssemblyVersion("1.0.0.<#= this.day #><#= this.hour #>")]
+[assembly: AssemblyFileVersion("1.0.0.<#= this.day #><#= this.hour #>")]
 <#+
-    int RevisionNumber = (int)(DateTime.UtcNow - new DateTime(2019,1,1)).TotalDays;
-	int RevisionNumberMin = Convert.ToInt32(DateTime.Now.TimeOfDay.TotalMinutes);
+    int day = (int)(DateTime.UtcNow - new DateTime(2019,1,1)).TotalDays;
+	int hour = Convert.ToInt32(DateTime.Now.TimeOfDay.TotalHours);
 #>

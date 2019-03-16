@@ -78,7 +78,9 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         private void HandleClient(Socket client)
         {
-            Program.logging.Log("Client connection recieved!", 0);
+            string clientIP = client.RemoteEndPoint.ToString().Split(':')[0];
+
+            Program.logging.Log(String.Format("Connection recieved from '{0}'!", clientIP), 0); 
 
             NetworkStream netStream = new NetworkStream(client);
 
@@ -86,14 +88,14 @@ namespace mullak99.ACW.NetworkACW.locationserver
             int bytesRead = netStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
             string recievedMessage = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead).TrimEnd('\n', '\r');
 
-            Program.logging.Log("Received: " + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
+            Program.logging.Log(String.Format("Received (IP={0}): ", clientIP) + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
 
             LCH.Protocol protocol = LCH.Protocol.WHOIS;
             Command command = LCH.ConvertClientRequestToCommand(recievedMessage, ref protocol);
 
-            string returnMessage = ExecuteCommand(command, protocol);
+            string returnMessage = ExecuteCommand(command, clientIP, protocol);
 
-            Program.logging.Log(String.Format("Sending (Protocol={0}): {1}", command.GetProtocol().ToString(), returnMessage.Replace("\r\n", "<CR><LF>")));
+            Program.logging.Log(String.Format("Sending (Protocol={0}, IP={1}): {2}", command.GetProtocol().ToString(), clientIP, returnMessage.Replace("\r\n", "<CR><LF>")));
 
             byte[] dataBytes = ASCIIEncoding.ASCII.GetBytes(returnMessage);
             netStream.Write(dataBytes, 0, dataBytes.Length);
@@ -102,13 +104,13 @@ namespace mullak99.ACW.NetworkACW.locationserver
             client.Close();
         }
 
-        private string ExecuteCommand(Command command, LCH.Protocol protocol = LCH.Protocol.WHOIS)
+        private string ExecuteCommand(Command command, string ip, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
             if (command.GetType() == typeof(CommandGetLocation))
             {
                 CommandGetLocation getLocation = (CommandGetLocation)command;
 
-                Program.logging.Log(String.Format("CommandGetLocation (Protocol={0}): {1}", getLocation.GetProtocol().ToString(), string.Join(" ", getLocation.GetArguments())));
+                Program.logging.Log(String.Format("CommandGetLocation (Protocol={0}, IP={1}): {2}", getLocation.GetProtocol().ToString(), ip, string.Join(" ", getLocation.GetArguments())));
 
                 PersonLocation pLocation = Program.locations.GetPersonLocation(getLocation.GetPersonID());
 
@@ -120,7 +122,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
             {
                 CommandSetLocation setLocation = (CommandSetLocation)command;
 
-                Program.logging.Log(String.Format("CommandSetLocation (Protocol={0}): {1}", setLocation.GetProtocol().ToString(), string.Join(" ", setLocation.GetArguments())));
+                Program.logging.Log(String.Format("CommandSetLocation (Protocol={0}, IP={1}): {2}", setLocation.GetProtocol().ToString(), ip, string.Join(" ", setLocation.GetArguments())));
 
                 return setLocation.RespondToClient(Program.locations.AddPersonLocation(new PersonLocation(setLocation.GetPersonID(), setLocation.GetLocation()), true));
             }
