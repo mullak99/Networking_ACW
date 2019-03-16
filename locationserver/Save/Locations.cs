@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod;
 
 namespace mullak99.ACW.NetworkACW.locationserver.Save
 {
@@ -9,12 +10,14 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
     {
         protected string _dbPath;
         internal Database _dataBase;
+        internal DatabaseType _dbType;
 
         protected List<PersonLocation> _peopleLocations = new List<PersonLocation>();
 
-        public Locations(string databaseFilePath = null)
+        public Locations(string databaseFilePath = null, DatabaseType dataBaseType = DatabaseType.SQLite)
         {
             _dbPath = databaseFilePath;
+            _dbType = dataBaseType;
 
             if (!String.IsNullOrEmpty(_dbPath))
             {
@@ -84,29 +87,69 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
         {
             if (!String.IsNullOrEmpty(_dbPath))
             {
-                if (Database.IsFileSQLiteDB(_dbPath))
+                string method = "";
+                switch (_dbType)
                 {
-                    _dataBase = new Database(_dbPath);
-                    _peopleLocations = _dataBase.LoadDB();
-                    Program.logging.Log(String.Format("LocationsDB: Importing Locations from '{0}'", _dbPath), 0);
-                    return true;
+                    case DatabaseType.TextFile:
+                        {
+                            _dataBase = new PropTextFile(_dbPath);
+                            method = "TextFile";
+                            break;
+                        }
+                    case DatabaseType.SQLite:
+                    default:
+                        {
+                            if (SQLite.IsFileSQLiteDB(_dbPath))
+                            {
+                                _dataBase = new SQLite(_dbPath);
+                                method = "SQLite";
+                                break;
+                            }
+                            else
+                            {
+                                Program.logging.Log(String.Format("LocationsDB: '{0}' is not a valid database! Loading aborted", _dbPath), 2);
+                                return false;
+                            }
+                        }
                 }
-                Program.logging.Log(String.Format("LocationsDB: '{0}' is not a valid database! Loading aborted", _dbPath), 2);
-                return false;
+                _peopleLocations = _dataBase.LoadDB();
+                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Importing Locations from '{0}'", _dbPath, method), 0);
+                return true;
             }
             return false;
         }
 
         public void ExportToDB()
         {
-            if (!String.IsNullOrEmpty(_dbPath))
+            string method = "";
+            switch (_dbType)
             {
-                if (_dataBase == null)
-                    _dataBase = new Database(_dbPath);
+                case DatabaseType.TextFile:
+                    {
+                        if (!String.IsNullOrEmpty(_dbPath))
+                        {
+                            if (_dataBase == null)
+                                _dataBase = new PropTextFile(_dbPath);
 
-                Program.logging.Log(String.Format("LocationsDB: Exporting Locations to '{0}'...", _dbPath), 0);
-                _dataBase.SaveDB(_peopleLocations);
+                            method = "TextFile";
+                        }
+                        break;
+                    }
+                case DatabaseType.SQLite:
+                default:
+                    {
+                        if (!String.IsNullOrEmpty(_dbPath))
+                        {
+                            if (_dataBase == null)
+                                _dataBase = new SQLite(_dbPath);
+
+                            method = "SQLite";
+                        }
+                        break;
+                    }
             }
+            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Exporting Locations to '{0}'...", _dbPath, method), 0);
+            _dataBase.SaveDB(_peopleLocations);
         }
     }
 

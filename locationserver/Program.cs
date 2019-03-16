@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using mullak99.ACW.NetworkACW.LCHLib;
 using mullak99.ACW.NetworkACW.locationserver.Save;
+using mullak99.ACW.NetworkACW.locationserver.Save.SaveMethod;
 
 namespace mullak99.ACW.NetworkACW.locationserver
 {
@@ -17,6 +18,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         private static bool _verbose = false;
         private static bool _showVer = false;
+        private static bool _useTextFileDB = false;
 
         internal static Logging logging;
         private static string _logFile;
@@ -40,6 +42,8 @@ namespace mullak99.ACW.NetworkACW.locationserver
                     _verbose = true;
                 else if (args[i].ToLower().TrimStart('/', '-') == "v" || args[i].ToLower().TrimStart('/', '-') == "version") // Show Version
                     _showVer = true;
+                else if (args[i].ToLower().TrimStart('/', '-') == "a" || args[i].ToLower().TrimStart('/', '-') == "alternatedb") // Alternate DB (Use Text File)
+                    _useTextFileDB = true;
                 else if (args[i].ToLower().TrimStart('/', '-') == "l" && !String.IsNullOrEmpty(args[i + 1])) // Log File Path
                 {
                     _logFile = args[i + 1];
@@ -52,8 +56,11 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 }
             }
 
+            DatabaseType dbType = DatabaseType.SQLite;
+            if (_useTextFileDB) dbType = DatabaseType.TextFile;
+
             logging = new Logging(_verbose, _logFile);
-            locations = new Locations(_dbFile);
+            locations = new Locations(_dbFile, dbType);
 
             if (_UI)
             {

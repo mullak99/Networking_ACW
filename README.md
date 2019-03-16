@@ -53,6 +53,7 @@ The full list of possible argument are as follows:
 - `-p <Port>`: Set the port of the server (Default: 43)
 - `-l <path>`: Path of the log file to save all messages
 - `-f <path>`: Path of the database file to save peoples names and locations
+- `-a`: Switches to saving the database file in its alternative format (TextFile)
 - `-d`: Enable debug mode (verbosely shows what the client is doing)
 - `-w`: Opens the server in a WindowsForms window
 - `-v`: Outputs the current version and build date of LocationServer to Console

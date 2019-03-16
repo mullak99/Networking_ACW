@@ -83,7 +83,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.tt</DependentUpon>
     </Compile>
-    <Compile Include="Save\Database.cs" />
+    <Compile Include="Save\SaveMethod\Database.cs" />
+    <Compile Include="Save\SaveMethod\PropTextFile.cs" />
+    <Compile Include="Save\SaveMethod\SQLite.cs" />
     <Compile Include="Save\Locations.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
