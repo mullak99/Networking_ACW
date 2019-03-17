@@ -16,7 +16,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
         /// <param name="protocol">Protocol to use</param>
         public CommandSetLocation(string user, string location, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
-            _user = user.Replace(":", "");
+            _user = user.Replace(":", "").TrimStart('/');
             _location = location.Replace(":", "");
             _protocol = protocol;
         }

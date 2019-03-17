@@ -10,7 +10,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
 
         public CommandGetLocation(string user, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
-            _user = user.Replace(":", "");
+            _user = user.Replace(":", "").TrimStart('/');
             _protocol = protocol;
         }
 
