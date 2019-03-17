@@ -1,14 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.LCHLib.Commands
 {
     internal class CommandHandler
     {
+        /// <summary>
+        /// Converts the command string to a Command type
+        /// </summary>
+        /// <param name="commandString">Command string (either "<person>" or "<person> <location>")</param>
+        /// <param name="protocol">Protocol to use when sending the command</param>
+        /// <returns>The appropriate Command</returns>
         internal static Command CommandFinder(string commandString, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
             string[] commandParts = Regex.Matches(commandString, @"[\""].+?[\""]|[^ ]+").Cast<Match>().Select(m => m.Value).ToArray();
@@ -36,6 +39,12 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
             }
         }
 
+        /// <summary>
+        /// Converts the command recieved by the server to a Command type
+        /// </summary>
+        /// <param name="commandString">Command string (In any protocol format)</param>
+        /// <param name="protocol">Detected Protocol format</param>
+        /// <returns>The appropriate Command</returns>
         internal static Command CommandFinderServer(string commandString, ref LCH.Protocol protocol)
         {
             string[] commandSplit = commandString.Replace("\n", "").Split('\r');

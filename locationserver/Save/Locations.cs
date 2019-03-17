@@ -159,8 +159,8 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
 
         public PersonLocation(string personID, string personLocation)
         {
-            _personID = personID;
-            _personLocation = personLocation;
+            _personID = personID.Replace(":", "");
+            _personLocation = personLocation.Replace(":", "");
         }
 
         public string GetPersonID()
@@ -175,7 +175,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
 
         public void SetPersonLocation(string personLocation)
         {
-            _personLocation = personLocation;
+            _personLocation = personLocation.Replace(":", "");
         }
     }
 }

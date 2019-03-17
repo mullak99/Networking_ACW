@@ -32,11 +32,12 @@
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
             this.sidePanel = new System.Windows.Forms.Panel();
-            this.copyrightLabel = new System.Windows.Forms.Label();
             this.settingsMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.setLocationMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.getLocationMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.connectMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
+            this.copyrightLabel = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.titleBar.SuspendLayout();
             this.sidePanel.SuspendLayout();
             this.SuspendLayout();
@@ -86,6 +87,7 @@
             // sidePanel
             // 
             this.sidePanel.BackColor = System.Drawing.Color.Gray;
+            this.sidePanel.Controls.Add(this.panel1);
             this.sidePanel.Controls.Add(this.settingsMenuButton);
             this.sidePanel.Controls.Add(this.setLocationMenuButton);
             this.sidePanel.Controls.Add(this.getLocationMenuButton);
@@ -96,18 +98,6 @@
             this.sidePanel.Size = new System.Drawing.Size(149, 426);
             this.sidePanel.TabIndex = 2;
             this.sidePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.SidePanel_Paint);
-            // 
-            // copyrightLabel
-            // 
-            this.copyrightLabel.BackColor = System.Drawing.Color.Transparent;
-            this.copyrightLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.copyrightLabel.ForeColor = System.Drawing.SystemColors.Control;
-            this.copyrightLabel.Location = new System.Drawing.Point(3, 383);
-            this.copyrightLabel.Name = "copyrightLabel";
-            this.copyrightLabel.Size = new System.Drawing.Size(143, 37);
-            this.copyrightLabel.TabIndex = 2;
-            this.copyrightLabel.Text = "Apache 2.0 - 2019\r\nmullak99";
-            this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // settingsMenuButton
             // 
@@ -153,6 +143,25 @@
             this.connectMenuButton.Text = "Connect";
             this.connectMenuButton.Click += new System.EventHandler(this.ConnectMenuButton_Click);
             // 
+            // copyrightLabel
+            // 
+            this.copyrightLabel.BackColor = System.Drawing.Color.Transparent;
+            this.copyrightLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.copyrightLabel.ForeColor = System.Drawing.SystemColors.Control;
+            this.copyrightLabel.Location = new System.Drawing.Point(3, 383);
+            this.copyrightLabel.Name = "copyrightLabel";
+            this.copyrightLabel.Size = new System.Drawing.Size(143, 37);
+            this.copyrightLabel.TabIndex = 2;
+            this.copyrightLabel.Text = "Apache 2.0 - 2019\r\nmullak99";
+            this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // panel1
+            // 
+            this.panel1.Location = new System.Drawing.Point(150, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(650, 426);
+            this.panel1.TabIndex = 3;
+            // 
             // LocationClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,6 +191,7 @@
         private LCHLib.mUI.CustomControls.SubMenuButton settingsMenuButton;
         private LCHLib.mUI.CustomControls.SubMenuButton setLocationMenuButton;
         private LCHLib.mUI.CustomControls.SubMenuButton getLocationMenuButton;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

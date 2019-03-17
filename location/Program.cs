@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -32,8 +31,10 @@ namespace mullak99.ACW.NetworkACW.location
         [STAThread]
         static void Main(string[] args)
         {
+            #region CLI Arguments
             for (int i = 0; i < args.Length; i++)
             {
+                
                 if (args[i][0] == '-' || args[i][0] == '/')
                 {
                     // Program Args
@@ -75,7 +76,7 @@ namespace mullak99.ACW.NetworkACW.location
                         _protocol = LCH.Protocol.HTTP11;
                         progArgs.Add(args[i]);
                     }
-                    else if (args[i].ToLower().TrimStart('/', '-') == "d" || args[i].ToLower().TrimStart('/', '-') == "debug" || args[i].ToLower().TrimStart('/', '-') == "verbose") // Debug Mode
+                    else if (args[i].ToLower().TrimStart('/', '-') == "d" || args[i].ToLower().TrimStart('/', '-') == "dev" || args[i].ToLower().TrimStart('/', '-') == "debug"|| args[i].ToLower().TrimStart('/', '-') == "developer" || args[i].ToLower().TrimStart('/', '-') == "verbose") // Developer Mode
                     {
                         _verbose = true;
                         progArgs.Add(args[i]);
@@ -93,56 +94,47 @@ namespace mullak99.ACW.NetworkACW.location
                     commandArgs.Add(args[i]);
                 }
             }
+            #endregion
 
             logging = new Logging(_verbose, _logFile);
 
-            if (args.Length == 0)
+            if (_showVer)
             {
-                if (!IsLinux)
-                {
-                    var handle = GetConsoleWindow();
-
-                    FreeConsole();
-                    ShowWindow(handle, SW_HIDE);
-                }
+                logging.Log("LocationClient " + GetVersion(true), 1, true);
+            }
+            else if (commandArgs.Count == 0 && !IsLinux) // Launch GUI (Skip if is Linux)
+            {
+                ShowWindow(GetConsoleWindow(), SW_HIDE); // Hides Command Prompt
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new LocationClientForm());
             }
+            else if (commandArgs.Count == 0 && IsLinux)
+            {
+                logging.Log("LocationClient GUI is not supported on Linux. Please use the command line arguments instead.", 1, true);
+            }
             else
             {
-                if (!IsLinux) AllocConsole();
+                LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0], _serverPort, _timeOut);
+                location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs), _protocol));
 
-                if (_showVer)
-                {
-                    Console.WriteLine("LocationClient " + GetVersion(true));
-                }
-                else
-                {
-                    try
-                    {
-                        LocationClient location = new LocationClient(Dns.GetHostAddresses(_serverAddress)[0], _serverPort, _timeOut);
-
-                        location.SendCommand(LCH.ConvertStringToCommand(string.Join(" ", commandArgs), _protocol));
-
-                        location.Close();
-                        if (GetDebug())
-                            Console.ReadKey();
-                    }
-                    catch (SocketException)
-                    {
-                        logging.Log(String.Format("'{0}' is not an address!", _serverAddress), 2);
-                    }
-                }
+                if (GetDeveloperMode()) Console.ReadKey();
             }
         }
 
+        #region Getters and Setters
+
+        /// <summary>
+        /// Gets the version of LocationClient
+        /// </summary>
+        /// <param name="incBuildDate">Append the build date of the current LocationClient exe to the version string</param>
+        /// <returns>Formatted version string</returns>
         public static string GetVersion(bool incBuildDate = false)
         {
             #pragma warning disable 0162
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = GetLinkerTime(Assembly.GetExecutingAssembly());
+            DateTime buildDate = GetBuildDateTime();
 
             if (_isDevBuild)
             {
@@ -157,24 +149,88 @@ namespace mullak99.ACW.NetworkACW.location
             #pragma warning restore 0162
         }
 
-        public static bool GetDebug()
+        /// <summary>
+        /// Sets the IP and Port used to connect to the server
+        /// </summary>
+        /// <param name="ipAddress">Server IP Address</param>
+        /// <param name="port">Server Port</param>
+        public static void SetServerAddress(string ipAddress, int port)
+        {
+            _serverAddress = ipAddress;
+            _serverPort = port;
+        }
+
+        /// <summary>
+        /// Gets the address of the server
+        /// </summary>
+        /// <param name="includePort">Whether to append the port to the end of the address (after a colon)</param>
+        /// <returns>Server Address (e.g. "x.x.x.x" or "x.x.x.x:port")</returns>
+        public static string GetServerAddress(bool includePort)
+        {
+            if (includePort) return _serverAddress + ":" + _serverPort;
+            else return _serverAddress;
+        }
+
+        /// <summary>
+        /// Sets the timeout on wait operations
+        /// </summary>
+        /// <param name="timeout">Max wait time (in milliseconds)</param>
+        public static void SetTimeout(UInt16 timeout)
+        {
+            _timeOut = timeout;
+        }
+
+        /// <summary>
+        /// Gets the timeout used on wait operations
+        /// </summary>
+        /// <returns>Max wait time (in milliseconds)</returns>
+        public static UInt16 GetTimeout()
+        {
+            return _timeOut;
+        }
+
+        /// <summary>
+        /// Sets if LocationClient should run in Developer Mode (Enhanced debugging)
+        /// </summary>
+        /// <param name="devMode"></param>
+        public static void SetDeveloperMode(bool devMode)
+        {
+            _verbose = devMode;
+            SetDeveloperMode(_verbose);
+            if (devMode) logging.Log("Developer Mode Enabled!", 0);
+        }
+
+        /// <summary>
+        /// Gets if LocationClient has been launched in developer mode.
+        /// </summary>
+        /// <returns>If the program is in Developer Mode</returns>
+        public static bool GetDeveloperMode()
         {
             return _verbose;
         }
 
+        /// <summary>
+        /// Sets the path of the log file
+        /// </summary>
+        /// <param name="path">Log filepath</param>
+        public static void SetLogPath(string path)
+        {
+            _logFile = path;
+            logging.Log(String.Format("Log path changed to '{0}'", path), 0);
+        }
+
+        /// <summary>
+        /// Gets the path of the log file
+        /// </summary>
+        /// <returns>Log filepath</returns>
         public static string GetLogPath()
         {
             return _logFile;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FreeConsole();
-
+        /// <summary>
+        /// If LocationClient is running on Linux
+        /// </summary>
         public static bool IsLinux
         {
             get
@@ -184,18 +240,13 @@ namespace mullak99.ACW.NetworkACW.location
             }
         }
 
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        const int SW_HIDE = 0;
-        const int SW_SHOW = 5;
-
-        public static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        /// <summary>
+        /// Gets the Time & Date of when LocationClient was built
+        /// </summary>
+        /// <returns>DateTime of when LocationClient was built</returns>
+        public static DateTime GetBuildDateTime()
         {
-            var filePath = assembly.Location;
+            var filePath = Assembly.GetExecutingAssembly().Location;
             const int c_PeHeaderOffset = 60;
             const int c_LinkerTimestampOffset = 8;
 
@@ -210,10 +261,22 @@ namespace mullak99.ACW.NetworkACW.location
 
             var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
 
-            var tz = target ?? TimeZoneInfo.Local;
+            var tz = TimeZoneInfo.Local;
             var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
 
             return localTime;
         }
+        #endregion
+
+        #region Hybrid Console & Windows Form Workaround
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+        #endregion
     }
 }

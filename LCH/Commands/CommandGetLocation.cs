@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.LCHLib.Commands
 {
@@ -13,73 +10,105 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
 
         public CommandGetLocation(string user, LCH.Protocol protocol = LCH.Protocol.WHOIS)
         {
-            _user = user;
+            _user = user.Replace(":", "");
             _protocol = protocol;
         }
 
+        /// <summary>
+        /// Composes the command that the client sends to the server (in the desired protocol)
+        /// </summary>
+        /// <returns>Composed command string</returns>
         public string ComposeCommand()
         {
             switch (_protocol)
             {
                 case LCH.Protocol.HTTP09:
                     {
-                        return String.Format("GET /{0}\r\n", _user.TrimEnd(' '));
+                        return String.Format("GET /{0}\r\n", GetPersonID().TrimEnd(' '));
                     }
                 case LCH.Protocol.HTTP10:
                     {
-                        return String.Format("GET /?{0} HTTP/1.0\r\n{1}\r\n", _user.TrimEnd(' '), LCH.LCH_HeaderContent);
+                        return String.Format("GET /?{0} HTTP/1.0\r\n{1}\r\n", GetPersonID().TrimEnd(' '), LCH.LCH_HeaderContent);
                     }
                 case LCH.Protocol.HTTP11:
                     {
-                        return String.Format("GET /?name={0} HTTP/1.1\r\nHost: LocationClient-m99\r\n{1}\r\n", _user.TrimEnd(' '), LCH.LCH_HeaderContent);
+                        return String.Format("GET /?name={0} HTTP/1.1\r\nHost: LocationClient-m99\r\n{1}\r\n", GetPersonID().TrimEnd(' '), LCH.LCH_HeaderContent);
                     }
                 case LCH.Protocol.WHOIS:
                 default:
                     {
-                        return String.Format("{0}\r\n", _user.TrimEnd(' '));
+                        return String.Format("{0}\r\n", GetPersonID().TrimEnd(' '));
                     }
             }
         }
 
+        /// <summary>
+        /// Gets all arguments
+        /// </summary>
+        /// <returns>Arguments of the Command</returns>
         public List<string> GetArguments()
         {
-            return new List<string>() { _user };
+            return new List<string>() { GetPersonID() };
         }
 
+        /// <summary>
+        /// Gets the persons name
+        /// </summary>
+        /// <returns>Person name</returns>
         public string GetPersonID()
         {
-            return _user;
+            return _user.Replace(":", "");
         }
 
+        /// <summary>
+        /// Gets the persons location
+        /// </summary>
+        /// <returns>Person location</returns>
         public string GetLocation()
         {
-            return _location;
+            return _location.Replace(":", "");
         }
 
+        /// <summary>
+        /// Gets the protocol used to compose the command
+        /// </summary>
+        /// <returns>Protocol used to compose the command</returns>
         public LCH.Protocol GetProtocol()
         {
             return _protocol;
         }
 
+        /// <summary>
+        /// Sets the persons location
+        /// </summary>
+        /// <param name="location">Person location</param>
         public void SetLocation(string location)
         {
-            _location = location;
+            _location = location.Replace(":", "");
         }
 
-
+        /// <summary>
+        /// Converts the command to a user-friendly string
+        /// </summary>
+        /// <returns>The persons name and location</returns>
         public override string ToString()
         {
-            if (!String.IsNullOrEmpty(_user) && String.IsNullOrEmpty(_location))
+            if (!String.IsNullOrEmpty(GetPersonID()) && String.IsNullOrEmpty(GetLocation()))
             {
-                return _user;
+                return GetPersonID();
             }
-            else if (!String.IsNullOrEmpty(_user) && !String.IsNullOrEmpty(_location))
+            else if (!String.IsNullOrEmpty(GetPersonID()) && !String.IsNullOrEmpty(GetLocation()))
             {
-                return String.Format("{0} is {1}\r\n", _user.TrimEnd(' '), _location.TrimEnd(' '));
+                return String.Format("{0} is {1}\r\n", GetPersonID().TrimEnd(' '), GetLocation().TrimEnd(' '));
             }
             else return null;
         }
 
+        /// <summary>
+        /// Resolves the response the server sent to the client
+        /// </summary>
+        /// <param name="data">Servers response</param>
+        /// <returns>If the sent command was successful</returns>
         public bool ResolveResponse(string data)
         {
             switch (_protocol)
@@ -132,6 +161,11 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
             }
         }
 
+        /// <summary>
+        /// Composes the response the server will send to the client
+        /// </summary>
+        /// <param name="success">Whether to send an 'OK' response, or a 'Not Found' response</param>
+        /// <returns>String to send the client</returns>
         public string RespondToClient(bool success = true)
         {
             if (!String.IsNullOrEmpty(_location) && success)
@@ -140,15 +174,15 @@ namespace mullak99.ACW.NetworkACW.LCHLib.Commands
                 {
                     case LCH.Protocol.HTTP09:
                         {
-                            return String.Format("HTTP/0.9 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", _location.TrimEnd(' '));
+                            return String.Format("HTTP/0.9 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", GetLocation().TrimEnd(' '));
                         }
                     case LCH.Protocol.HTTP10:
                         {
-                            return String.Format("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", _location.TrimEnd(' '));
+                            return String.Format("HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\n{0}\r\n", GetLocation().TrimEnd(' '));
                         }
                     case LCH.Protocol.HTTP11:
                         {
-                            return String.Format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n{1}\r\n{0}\r\n", _location.TrimEnd(' '), LCH.LCH_HeaderContent);
+                            return String.Format("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n{1}\r\n{0}\r\n", GetLocation().TrimEnd(' '), LCH.LCH_HeaderContent);
                         }
                     case LCH.Protocol.WHOIS:
                     default:

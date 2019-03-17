@@ -1,25 +1,51 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace mullak99.ACW.NetworkACW.LCHLib
 {
     public class Logging
     {
         private string _logPath = "";
-        private bool _isDebug = false;
+        private bool _isDevMode = false;
 
-        public Logging(bool isDebugMode, string logPath = "")
+        /// <summary>
+        /// Handles the logging of all messages to a log-file and/or console
+        /// </summary>
+        /// <param name="isDevMode">Whether to enable verbose logging</param>
+        /// <param name="logPath">Path of the log file (Leave blank for no log file)</param>
+        public Logging(bool isDevMode, string logPath = "")
         {
             _logPath = logPath;
-            _isDebug = isDebugMode;
+            _isDevMode = isDevMode;
         }
 
+        /// <summary>
+        /// Sets if verbose logging is enabled
+        /// </summary>
+        /// <param name="isDevMode">Whether to enable verbose logging</param>
+        public void SetDeveloperMode(bool isDevMode)
+        {
+            _isDevMode = isDevMode;
+        }
+
+        /// <summary>
+        /// Gets if verbose logging is enabled
+        /// </summary>
+        /// <returns>Whether to enable verbose logging</returns>
+        public bool GetDeveloperMode()
+        {
+            return _isDevMode;
+        }
+
+        /// <summary>
+        /// Adds the desired string to the log
+        /// </summary>
+        /// <param name="log">Raw logging message</param>
+        /// <param name="severity">Severity of the log (0=Debug, 1=Info, 2=Warn, 3=Error)</param>
+        /// <param name="rawOutput">If output should be logged in its raw form (don't include severity prefixes)</param>
         public void Log(string log, int severity = 1, bool rawOutput = false)
         {
-            if (_isDebug)
+            if (_isDevMode)
             {
                 if (severity == 0)
                 {
@@ -41,7 +67,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib
             else
             {
                 if (rawOutput) IntLog(log, false, true);
-                if (severity == 0 && _isDebug)
+                if (severity == 0 && _isDevMode)
                 {
                     IntLog(String.Format("[{0} DEBUG] {1}", CurrentTime(), log), rawOutput);
                 }
@@ -61,6 +87,12 @@ namespace mullak99.ACW.NetworkACW.LCHLib
             
         }
 
+        /// <summary>
+        /// Internal Logging Handler
+        /// </summary>
+        /// <param name="log">Raw logging message</param>
+        /// <param name="skipWriteLine">Skip writing line to console</param>
+        /// <param name="skipFileAppend">Skip writing line to log file</param>
         private void IntLog(string log, bool skipWriteLine = false, bool skipFileAppend = false)
         {
             if (!skipWriteLine) Console.WriteLine(log.TrimEnd('\r', '\n'));
@@ -68,6 +100,10 @@ namespace mullak99.ACW.NetworkACW.LCHLib
                 File.AppendAllText(_logPath, log + Environment.NewLine);
         }
 
+        /// <summary>
+        /// Current Time (HH:mm:ss.FFF)
+        /// </summary>
+        /// <returns>Current time in 'HH:mm:ss.FFF' format</returns>
         private string CurrentTime()
         {
             return DateTime.Now.ToString("HH:mm:ss.FFF");
