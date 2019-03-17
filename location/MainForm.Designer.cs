@@ -28,16 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.titleBar = new System.Windows.Forms.Panel();
             this.titleLabel = new System.Windows.Forms.Label();
             this.quitButton = new System.Windows.Forms.Button();
             this.sidePanel = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.settingsMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.setLocationMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.getLocationMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.connectMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.copyrightLabel = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.runtime = new System.Windows.Forms.Timer(this.components);
+            this.connectPanel = new mullak99.ACW.NetworkACW.location.MenuPanels.ConnectPanel();
             this.titleBar.SuspendLayout();
             this.sidePanel.SuspendLayout();
             this.SuspendLayout();
@@ -74,10 +77,11 @@
             this.quitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.quitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.quitButton.ForeColor = System.Drawing.Color.LightGray;
-            this.quitButton.Location = new System.Drawing.Point(777, 1);
+            this.quitButton.Location = new System.Drawing.Point(776, 1);
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(23, 23);
             this.quitButton.TabIndex = 1;
+            this.quitButton.TabStop = false;
             this.quitButton.Text = "✖";
             this.quitButton.UseVisualStyleBackColor = false;
             this.quitButton.Click += new System.EventHandler(this.QuitButton_Click);
@@ -99,6 +103,13 @@
             this.sidePanel.TabIndex = 2;
             this.sidePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.SidePanel_Paint);
             // 
+            // panel1
+            // 
+            this.panel1.Location = new System.Drawing.Point(150, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(650, 426);
+            this.panel1.TabIndex = 3;
+            // 
             // settingsMenuButton
             // 
             this.settingsMenuButton.BackColor = System.Drawing.Color.Transparent;
@@ -113,6 +124,7 @@
             // setLocationMenuButton
             // 
             this.setLocationMenuButton.BackColor = System.Drawing.Color.Transparent;
+            this.setLocationMenuButton.Enabled = false;
             this.setLocationMenuButton.Location = new System.Drawing.Point(1, 177);
             this.setLocationMenuButton.Name = "setLocationMenuButton";
             this.setLocationMenuButton.Selected = false;
@@ -124,6 +136,7 @@
             // getLocationMenuButton
             // 
             this.getLocationMenuButton.BackColor = System.Drawing.Color.Transparent;
+            this.getLocationMenuButton.Enabled = false;
             this.getLocationMenuButton.Location = new System.Drawing.Point(1, 111);
             this.getLocationMenuButton.Name = "getLocationMenuButton";
             this.getLocationMenuButton.Selected = false;
@@ -155,12 +168,18 @@
             this.copyrightLabel.Text = "Apache 2.0 - 2019\r\nmullak99";
             this.copyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
-            // panel1
+            // runtime
             // 
-            this.panel1.Location = new System.Drawing.Point(150, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(650, 426);
-            this.panel1.TabIndex = 3;
+            this.runtime.Enabled = true;
+            this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
+            // 
+            // connectPanel
+            // 
+            this.connectPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.connectPanel.Location = new System.Drawing.Point(149, 26);
+            this.connectPanel.Name = "connectPanel";
+            this.connectPanel.Size = new System.Drawing.Size(650, 422);
+            this.connectPanel.TabIndex = 3;
             // 
             // LocationClientForm
             // 
@@ -168,6 +187,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.connectPanel);
             this.Controls.Add(this.sidePanel);
             this.Controls.Add(this.titleBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -192,6 +212,8 @@
         private LCHLib.mUI.CustomControls.SubMenuButton setLocationMenuButton;
         private LCHLib.mUI.CustomControls.SubMenuButton getLocationMenuButton;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Timer runtime;
+        private MenuPanels.ConnectPanel connectPanel;
     }
 }
 

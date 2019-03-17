@@ -3,6 +3,7 @@
   <Costura>
     <IncludeAssemblies>
           LCH
+          SSM
       </IncludeAssemblies>
   </Costura>
 </Weavers>

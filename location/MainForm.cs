@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleSettingsManager;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,9 @@ namespace mullak99.ACW.NetworkACW.location
 {
     public partial class LocationClientForm : Form
     {
+        public static LocationClient location;
+        public static SSM ssm;
+
         public LocationClientForm()
         {
             InitializeComponent();
@@ -28,9 +32,24 @@ namespace mullak99.ACW.NetworkACW.location
             settingsMenuButton.registerDetoggles(new LCHLib.mUI.CustomControls.SubMenuButton[3] { connectMenuButton, getLocationMenuButton, setLocationMenuButton });
         }
 
+        private void Runtime_Tick(object sender, EventArgs e)
+        {
+            if (connectPanel.GetConnected())
+            {
+                getLocationMenuButton.Enabled = true;
+                setLocationMenuButton.Enabled = true;
+            }
+            else
+            {
+                getLocationMenuButton.Enabled = false;
+                setLocationMenuButton.Enabled = false;
+            }
+        }
+
         private void ConnectMenuButton_Click(object sender, EventArgs e)
         {
-
+            connectPanel.Enabled = true;
+            connectPanel.Visible = true;
         }
 
         private void GetLocationMenuButton_Click(object sender, EventArgs e)

@@ -41,6 +41,9 @@
     <Reference Include="Costura, Version=3.3.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.3.2\lib\net40\Costura.dll</HintPath>
     </Reference>
+    <Reference Include="SSM">
+      <HintPath>..\..\..\SSM\SimpleSettingsManager\SimpleSettingsManager\bin\Release\SSM.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -67,12 +70,39 @@
     <Compile Include="MenuPanels\ConnectPanel.Designer.cs">
       <DependentUpon>ConnectPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="MenuPanels\GetLocationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\GetLocationPanel.Designer.cs">
+      <DependentUpon>GetLocationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuPanels\SetLocationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\SetLocationPanel.Designer.cs">
+      <DependentUpon>SetLocationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuPanels\SettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\SettingsPanel.Designer.cs">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MenuPanels\ConnectPanel.resx">
       <DependentUpon>ConnectPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\GetLocationPanel.resx">
+      <DependentUpon>GetLocationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\SetLocationPanel.resx">
+      <DependentUpon>SetLocationPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\SettingsPanel.resx">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

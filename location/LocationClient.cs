@@ -21,7 +21,7 @@ namespace mullak99.ACW.NetworkACW.location
         /// <param name="serverIpAddress">IP Address of the server</param>
         /// <param name="serverPort">Port of the server</param>
         /// <param name="timeOut">Timeout to use for all requests to the server</param>
-        public LocationClient(IPAddress serverIpAddress, int serverPort, UInt16 timeOut = 2000)
+        public LocationClient(IPAddress serverIpAddress, int serverPort, UInt16 timeOut = 2000, bool autoStart = true)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace mullak99.ACW.NetworkACW.location
                 _port = serverPort;
                 _timeOut = Convert.ToInt32(timeOut);
 
-                Open();
+                if (autoStart) Open();
             }
             catch (SocketException)
             {

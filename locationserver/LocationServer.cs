@@ -88,17 +88,22 @@ namespace mullak99.ACW.NetworkACW.locationserver
             int bytesRead = netStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
             string recievedMessage = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead).TrimEnd('\n', '\r');
 
-            Program.logging.Log(String.Format("Received (IP={0}): ", clientIP) + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
+            try
+            {
+                Program.logging.Log(String.Format("Received (IP={0}): ", clientIP) + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
 
-            LCH.Protocol protocol = LCH.Protocol.WHOIS;
-            Command command = LCH.ConvertClientRequestToCommand(recievedMessage, ref protocol);
+                LCH.Protocol protocol = LCH.Protocol.WHOIS;
+                Command command = LCH.ConvertClientRequestToCommand(recievedMessage, ref protocol);
 
-            string returnMessage = ExecuteCommand(command, clientIP, protocol);
+                string returnMessage = ExecuteCommand(command, clientIP, protocol);
 
-            Program.logging.Log(String.Format("Sending (Protocol={0}, IP={1}): {2}", command.GetProtocol().ToString(), clientIP, returnMessage.Replace("\r\n", "<CR><LF>")));
+                Program.logging.Log(String.Format("Sending (Protocol={0}, IP={1}): {2}", command.GetProtocol().ToString(), clientIP, returnMessage.Replace("\r\n", "<CR><LF>")));
 
-            byte[] dataBytes = ASCIIEncoding.ASCII.GetBytes(returnMessage);
-            netStream.Write(dataBytes, 0, dataBytes.Length);
+                byte[] dataBytes = ASCIIEncoding.ASCII.GetBytes(returnMessage);
+                netStream.Write(dataBytes, 0, dataBytes.Length);
+            }
+            catch
+            { }
 
             netStream.Close();
             client.Close();

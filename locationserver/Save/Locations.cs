@@ -87,7 +87,7 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
         {
             if (!String.IsNullOrEmpty(_dbPath))
             {
-                string method = "";
+                string method;
                 switch (_dbType)
                 {
                     case DatabaseType.TextFile:
