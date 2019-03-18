@@ -47,6 +47,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="SSM">
+      <HintPath>..\..\..\SSM\SimpleSettingsManager\SimpleSettingsManager\bin\Release\SSM.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -77,6 +80,24 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MenuPanels\ConsolePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\ConsolePanel.Designer.cs">
+      <DependentUpon>ConsolePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuPanels\DatabasePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\DatabasePanel.Designer.cs">
+      <DependentUpon>DatabasePanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MenuPanels\SettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MenuPanels\SettingsPanel.Designer.cs">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <AutoGen>True</AutoGen>
@@ -87,6 +108,19 @@
     <Compile Include="Save\SaveMethod\PropTextFile.cs" />
     <Compile Include="Save\SaveMethod\SQLite.cs" />
     <Compile Include="Save\Locations.cs" />
+    <Compile Include="SSM_UI.cs" />
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\ConsolePanel.resx">
+      <DependentUpon>ConsolePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\DatabasePanel.resx">
+      <DependentUpon>DatabasePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MenuPanels\SettingsPanel.resx">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

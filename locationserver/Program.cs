@@ -14,7 +14,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
         public static Locations locations;
 
         private static bool _UI = false;
-        private static int _port = 43;
+        private static UInt16 _port = 43;
 
         private static bool _verbose = false;
         private static bool _showVer = false;
@@ -24,7 +24,9 @@ namespace mullak99.ACW.NetworkACW.locationserver
         private static string _logFile;
         private static string _dbFile;
 
-        private const bool _isDevBuild = true;
+        private static bool _autoStartUi = false;
+
+        private const bool _isDevBuild = false;
 
         /// <summary>
         /// The main entry point for the application.
@@ -34,7 +36,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
         {
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i].ToLower().TrimStart('/', '-') == "p" && !String.IsNullOrEmpty(args[i + 1]) && int.TryParse(args[i + 1], out _port))
+                if (args[i].ToLower().TrimStart('/', '-') == "p" && !String.IsNullOrEmpty(args[i + 1]) && UInt16.TryParse(args[i + 1], out _port))
                     i++;
                 else if (args[i].ToLower().TrimStart('/', '-') == "w")
                     _UI = true;
@@ -64,15 +66,14 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
             if (_UI)
             {
-                if (!IsLinux) FreeConsole();
+                ShowWindow(GetConsoleWindow(), SW_HIDE); // Hides Command Prompt
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new Form1());
+                Application.Run(new LocationServerForm());
             }
             else
             {
-                if (!IsLinux) AllocConsole();
-
                 if (_showVer)
                 {
                     Console.WriteLine("LocationServer " + GetVersion(true));
@@ -81,7 +82,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 {
                     LocationServer server = new LocationServer(_port);
 
-                    if (GetDebug())
+                    if (GetDeveloperMode())
                         Console.ReadKey();
                 }
                 
@@ -107,9 +108,14 @@ namespace mullak99.ACW.NetworkACW.locationserver
             #pragma warning restore 0162
         }
 
-        public static bool GetDebug()
+        public static bool GetDeveloperMode()
         {
             return _verbose;
+        }
+
+        public static void SetDeveloperMode(bool devMode)
+        {
+            _verbose = devMode;
         }
 
         public static string GetLogPath()
@@ -117,12 +123,40 @@ namespace mullak99.ACW.NetworkACW.locationserver
             return _logFile;
         }
 
+        public static void SetLogPath(string path)
+        {
+            _logFile = path;
+        }
+
         public static string GetDbPath()
         {
             return _dbFile;
         }
 
-        
+        public static void SetDbPath(string path)
+        {
+            _dbFile = path;
+        }
+
+        public static UInt16 GetPort()
+        {
+            return _port;
+        }
+
+        public static void SetPort(UInt16 port)
+        {
+            _port = port;
+        }
+
+        public static bool GetAutoStart()
+        {
+            return _autoStartUi;
+        }
+
+        public static void SetAutoStart(bool autoStart)
+        {
+            _autoStartUi = autoStart;
+        }
 
         public static bool IsLinux
         {
@@ -157,14 +191,6 @@ namespace mullak99.ACW.NetworkACW.locationserver
         }
 
         #region Hybrid Console & Windows Form Workaround
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FreeConsole();
-
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
 

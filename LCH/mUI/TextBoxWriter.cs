@@ -48,7 +48,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.mUI
 
         private void AppendWithColour(string text)
         {
-            if (text.Contains("DEBUG"))
+            if (text.Contains("DEBUG]"))
             {
                 _output.SelectionStart = _output.TextLength;
                 _output.SelectionLength = 0;
@@ -56,7 +56,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.mUI
                 _output.AppendText(text.ToString());
                 _output.SelectionColor = _output.ForeColor;
             }
-            else if (text.Contains("WARN"))
+            else if (text.Contains("WARN]"))
             {
                 _output.SelectionStart = _output.TextLength;
                 _output.SelectionLength = 0;
@@ -64,7 +64,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.mUI
                 _output.AppendText(text.ToString());
                 _output.SelectionColor = _output.ForeColor;
             }
-            else if (text.Contains("ERROR"))
+            else if (text.Contains("ERROR]"))
             {
                 _output.SelectionStart = _output.TextLength;
                 _output.SelectionLength = 0;
@@ -76,7 +76,7 @@ namespace mullak99.ACW.NetworkACW.LCHLib.mUI
             {
                 _output.SelectionStart = _output.TextLength;
                 _output.SelectionLength = 0;
-                _output.SelectionColor = _output.ForeColor;
+                _output.SelectionColor = Color.LightGray;
                 _output.AppendText(text.ToString());
             }
 

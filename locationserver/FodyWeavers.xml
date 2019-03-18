@@ -3,11 +3,12 @@
   <Costura>
     <IncludeAssemblies>
       LCH
-	  EntityFramework
-	  EntityFramework.SqlServer
-	  System.Data.SQLite
-	  System.Data.SQLite.EF6
-	  System.Data.SQLite.Linq
+      SSM
+	    EntityFramework
+	    EntityFramework.SqlServer
+	    System.Data.SQLite
+	    System.Data.SQLite.EF6
+	    System.Data.SQLite.Linq
     </IncludeAssemblies>
 	<Unmanaged32Assemblies>
 	  SQLite.Interop

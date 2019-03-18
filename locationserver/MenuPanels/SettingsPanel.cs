@@ -7,14 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SimpleSettingsManager;
 
-namespace mullak99.ACW.NetworkACW.location.MenuPanels
+namespace mullak99.ACW.NetworkACW.locationserver.MenuPanels
 {
     public partial class SettingsPanel : UserControl
     {
-        
-
         public SettingsPanel()
         {
             InitializeComponent();
@@ -25,14 +22,12 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
             LoadProg();
         }
 
-        
-
         private void LoadProg()
         {
             SetButtonEnabled(devModeButton, Program.GetDeveloperMode());
             SetButtonEnabled(writeLogButton, !String.IsNullOrEmpty(Program.GetLogPath()));
-            SetButtonEnabled(autoConnButton, Program.GetUiAutoConnect());
-            SetButtonEnabled(persistentAddrButton, Program.GetUiAutoFill());
+            SetButtonEnabled(autoStartButton, Program.GetAutoStart());
+            SetButtonEnabled(writeDbButton, !String.IsNullOrEmpty(Program.GetDbPath()));
         }
 
         private void SetButtonEnabled(Button button, bool enabled)
@@ -57,14 +52,11 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
             return false;
         }
 
-        private void PersistentAddrButton_Click(object sender, EventArgs e)
+        private void AutoStartButton_Click(object sender, EventArgs e)
         {
-            SetButtonEnabled(persistentAddrButton, !GetButtonEnabled(persistentAddrButton));
+            SetButtonEnabled(autoStartButton, !GetButtonEnabled(autoStartButton));
 
-            Program.SetUiAutoFill(GetButtonEnabled(persistentAddrButton));
-
-            if (!Program.GetUiAutoFill()) Program.SetServerAddress("127.0.0.1", 43);
-
+            Program.SetAutoStart(GetButtonEnabled(autoStartButton));
             SSM_UI.SaveSSM();
         }
 
@@ -72,10 +64,21 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
         {
             SetButtonEnabled(writeLogButton, !GetButtonEnabled(writeLogButton));
 
-            if (GetButtonEnabled(writeLogButton)) Program.SetLogPath("LocationClient.log");
+            if (GetButtonEnabled(writeLogButton)) Program.SetLogPath("LocationServer.log");
             else Program.SetLogPath("");
 
             Program.logging.SetLogPath(Program.GetLogPath());
+            SSM_UI.SaveSSM();
+        }
+
+        private void WriteDbButton_Click(object sender, EventArgs e)
+        {
+            SetButtonEnabled(writeDbButton, !GetButtonEnabled(writeDbButton));
+
+            if (GetButtonEnabled(writeDbButton)) Program.SetDbPath("LocationServer_DB.db");
+            else Program.SetDbPath("");
+
+            Program.locations.SetDbPath(Program.GetDbPath());
             SSM_UI.SaveSSM();
         }
 
@@ -85,14 +88,6 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
 
             Program.SetDeveloperMode(GetButtonEnabled(devModeButton));
             Program.logging.SetDeveloperMode(Program.GetDeveloperMode());
-            SSM_UI.SaveSSM();
-        }
-
-        private void AutoConnButton_Click(object sender, EventArgs e)
-        {
-            SetButtonEnabled(autoConnButton, !GetButtonEnabled(autoConnButton));
-
-            Program.SetUiAutoConnect(GetButtonEnabled(autoConnButton));
             SSM_UI.SaveSSM();
         }
     }

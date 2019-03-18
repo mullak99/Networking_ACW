@@ -15,15 +15,15 @@ namespace mullak99.ACW.NetworkACW.locationserver
         Thread _listenerThread;
 
         private IPAddress _ip = IPAddress.Any;
-        private int _port;
+        private UInt16 _port;
 
         private bool _connected = false;
 
-        public LocationServer(int port = 43)
+        public LocationServer(UInt16 port = 43, bool autoStart = true)
         {
             _port = port;
 
-            Open();
+            if (autoStart) Open();
         }
 
         public void Open()
@@ -32,8 +32,8 @@ namespace mullak99.ACW.NetworkACW.locationserver
             {
                 Program.logging.Log(String.Format("Starting LocationServer {0}...", Program.GetVersion()));
 
-                if (Program.GetDebug())
-                    Program.logging.Log("Debug Mode Enabled!", 0);
+                if (Program.GetDeveloperMode())
+                    Program.logging.Log("Developer Mode Enabled!", 0);
 
                 _listener = new TcpListener(_ip, _port);
 
@@ -41,6 +41,15 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 _listenerThread.Start();
             }
             else Program.logging.Log("LocationServer is already running!", 2);
+        }
+
+        /// <summary>
+        /// Gets if the server is active and listening for connections
+        /// </summary>
+        /// <returns>If the server is active and listening for connections</returns>
+        public bool GetListening()
+        {
+            return _connected;
         }
 
         private void StartListener()
@@ -53,7 +62,7 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
                 while (_connected)
                 {
-                    Socket client = _listener.AcceptSocket();   
+                    Socket client = _listener.AcceptSocket();
 
                     Thread handleRequest = new Thread(() => HandleClient(client));
                     handleRequest.Start();
@@ -66,6 +75,8 @@ namespace mullak99.ACW.NetworkACW.locationserver
                 else
                     Program.logging.Log("An unexpected SocketException occured on StartListener. Exception: " + e.ToString(), 3);
             }
+            catch (ThreadAbortException)
+            { }
             catch (Exception e)
             {
                 Program.logging.Log("An unexpected exception occured on StartListener. Exception: " + e.ToString(), 3);
@@ -146,9 +157,11 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         public void Close()
         {
+            Program.logging.Log("Stopping LocationServer...");
+
             _connected = false;
-            _listenerThread.Abort();
             _listener.Stop();
+            _listenerThread.Abort();
         }
     }
 }

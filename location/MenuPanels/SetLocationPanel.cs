@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using mullak99.ACW.NetworkACW.LCHLib.Commands;
 using mullak99.ACW.NetworkACW.LCHLib.mUI;
 using mullak99.ACW.NetworkACW.LCHLib;
-using System.Threading;
 
 namespace mullak99.ACW.NetworkACW.location.MenuPanels
 {

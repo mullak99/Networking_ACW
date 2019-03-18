@@ -26,8 +26,23 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
             }
         }
 
+        public void SetDbPath(string databaseFilePath)
+        {
+            _dbPath = databaseFilePath;
+
+            if (!String.IsNullOrEmpty(_dbPath))
+            {
+                if (File.Exists(_dbPath)) ImportFromDB();
+                ExportToDB();
+            }
+        }
+
         public bool AddPersonLocation(PersonLocation personLocation, bool useSetOnFail = false)
         {
+            if (_dbPath != Program.GetDbPath())
+            {
+                SetDbPath(Program.GetDbPath());
+            }
             if (!DoesPersonExist(personLocation))
             {
                 Program.logging.Log(String.Format("LocationsDB: Added '{0}' in location '{1}' to the database!", personLocation.GetPersonID(), personLocation.GetPersonLocation()), 0);
@@ -71,6 +86,11 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
         public PersonLocation GetPersonLocation(PersonLocation personLocation)
         {
             return GetPersonLocation(personLocation.GetPersonID());
+        }
+
+        public List<PersonLocation> GetAllPersonLocations()
+        {
+            return _peopleLocations;
         }
 
         public bool DoesPersonExist(string personID)
@@ -121,35 +141,32 @@ namespace mullak99.ACW.NetworkACW.locationserver.Save
 
         public void ExportToDB()
         {
-            string method = "";
-            switch (_dbType)
+            if (!String.IsNullOrEmpty(_dbPath))
             {
-                case DatabaseType.TextFile:
-                    {
-                        if (!String.IsNullOrEmpty(_dbPath))
+                string method = "";
+                switch (_dbType)
+                {
+                    case DatabaseType.TextFile:
                         {
                             if (_dataBase == null)
                                 _dataBase = new PropTextFile(_dbPath);
 
                             method = "TextFile";
+                            break;
                         }
-                        break;
-                    }
-                case DatabaseType.SQLite:
-                default:
-                    {
-                        if (!String.IsNullOrEmpty(_dbPath))
+                    case DatabaseType.SQLite:
+                    default:
                         {
                             if (_dataBase == null)
                                 _dataBase = new SQLite(_dbPath);
 
                             method = "SQLite";
+                            break;
                         }
-                        break;
-                    }
+                }
+                Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Exporting Locations to '{0}'...", _dbPath, method), 0);
+                _dataBase.SaveDB(_peopleLocations);
             }
-            Program.logging.Log(String.Format("LocationsDB (METHOD={1}): Exporting Locations to '{0}'...", _dbPath, method), 0);
-            _dataBase.SaveDB(_peopleLocations);
         }
     }
 

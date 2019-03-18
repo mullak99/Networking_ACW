@@ -29,7 +29,7 @@ namespace mullak99.ACW.NetworkACW.location
         private static bool _verbose = false;
         private static bool _showVer = false;
 
-        private const bool _isDevBuild = true;
+        private const bool _isDevBuild = false;
 
         [STAThread]
         static void Main(string[] args)
