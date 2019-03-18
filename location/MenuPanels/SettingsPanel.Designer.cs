@@ -70,8 +70,8 @@
             this.persistentAddrDesc.Name = "persistentAddrDesc";
             this.persistentAddrDesc.Size = new System.Drawing.Size(640, 22);
             this.persistentAddrDesc.TabIndex = 2;
-            this.persistentAddrDesc.Text = "Saves the last enterered server address, port and time-out. Ensures that it is ke" +
-    "pt across launches.\r\n";
+            this.persistentAddrDesc.Text = "Saves the last connected-to server address, port and time-out. Ensures that it is" +
+    " kept across launches.\r\n";
             // 
             // persistentAddrButton
             // 

@@ -34,7 +34,8 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
             }
 
             timeoutDelayTextBox.Value = Program.GetTimeout();
-            errorLabel.Text = "";
+
+            _address = serverAddressTextBox.Text;
 
             if (Program.GetUiAutoConnect()) ConnectButton_Click(null, null);
         }
@@ -66,6 +67,7 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
                 portTextBox.Enabled = false;
                 timeoutDelayTextBox.Enabled = false;
 
+                ShowError("Connection Successful!");
                 _isConnected = true;
             }
             else
@@ -83,49 +85,50 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
 
         private void ConnectButton_Click(object sender, EventArgs e)
         {
-            if (!GetConnected())
+            if (ValidateAddress())
             {
-                LocationClientForm.location = new LocationClient(Dns.GetHostAddresses(_address)[0], Convert.ToUInt16(portTextBox.Value), Convert.ToUInt16(timeoutDelayTextBox.Value), false);
-
-                if (LocationClientForm.location.Open().Contains("Connected to server"))
+                if (!GetConnected())
                 {
-                    ConnectButtonMode(true);
+                    LocationClientForm.location = new LocationClient(Dns.GetHostAddresses(_address)[0], Convert.ToUInt16(portTextBox.Value), Convert.ToUInt16(timeoutDelayTextBox.Value), false);
+
+                    if (LocationClientForm.location.Open().Contains("Connected to server"))
+                    {
+                        Program.SetServerAddress(_address, _port);
+                        SSM_UI.SaveSSM();
+                        ConnectButtonMode(true);
+                    }
+                    else
+                    {
+                        ConnectButtonMode(false);
+                    }
+                    LocationClientForm.location.Close();
                 }
                 else
                 {
+                    LocationClientForm.location.Close();
                     ConnectButtonMode(false);
                 }
-
-                LocationClientForm.location.Close();
-            }
-            else
-            {
-                LocationClientForm.location.Close();
-                ConnectButtonMode(false);
             }
         }
 
-        private void ServerAddressTextBox_TextChanged(object sender, EventArgs e)
-        {
-            Thread validate = new Thread(() => ValidateAddress());
-            validate.Start();
-        }
-
-        private void ValidateAddress()
+        private bool ValidateAddress()
         {
             try
             {
                 _ = Dns.GetHostAddresses(serverAddressTextBox.Text)[0];
 
                 _address = serverAddressTextBox.Text;
+                _port = Convert.ToUInt16(portTextBox.Value);
+                _timeOut = Convert.ToUInt16(timeoutDelayTextBox.Value);
                 connectButton.Enabled = true;
                 Program.SetServerAddress(_address, _port);
-
                 SSM_UI.SaveSSM();
+                return true;
             }
             catch
             {
                 connectButton.Enabled = false;
+                return false;
             }
         }
 
@@ -152,20 +155,6 @@ namespace mullak99.ACW.NetworkACW.location.MenuPanels
         private void ServerAddressTextBox_Enter(object sender, EventArgs e)
         {
             TextBoxAutoFill(serverAddressTextBox, Program.GetServerAddress(false), false);
-            SSM_UI.SaveSSM();
-        }
-
-        private void PortTextBox_ValueChanged(object sender, EventArgs e)
-        {
-            _port = Convert.ToUInt16(timeoutDelayTextBox.Value);
-            ServerAddressTextBox_TextChanged(sender, e);
-        }
-
-        private void TimeoutDelayTextBox_ValueChanged(object sender, EventArgs e)
-        {
-            _timeOut = Convert.ToUInt16(timeoutDelayTextBox.Value);
-            Program.SetTimeout(_timeOut);
-            SSM_UI.SaveSSM();
         }
 
         private void ServerAddressTextBox_Leave(object sender, EventArgs e)

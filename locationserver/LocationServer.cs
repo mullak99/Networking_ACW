@@ -78,38 +78,45 @@ namespace mullak99.ACW.NetworkACW.locationserver
 
         private void HandleClient(Socket client)
         {
-            string clientIP = client.RemoteEndPoint.ToString().Split(':')[0];
-
-            Program.logging.Log(String.Format("Connection recieved from '{0}'!", clientIP), 0); 
-
-            NetworkStream netStream = new NetworkStream(client);
-
-            byte[] bytesToRead = new byte[client.ReceiveBufferSize];
-            int bytesRead = netStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
-            string recievedMessage = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead).TrimEnd('\n', '\r');
-
             try
             {
-                if (!recievedMessage.Contains("/favicon.ico"))
+                string clientIP = client.RemoteEndPoint.ToString().Split(':')[0];
+
+                Program.logging.Log(String.Format("Connection recieved from '{0}'!", clientIP), 0);
+
+                NetworkStream netStream = new NetworkStream(client);
+
+                byte[] bytesToRead = new byte[client.ReceiveBufferSize];
+                int bytesRead = netStream.Read(bytesToRead, 0, client.ReceiveBufferSize);
+                string recievedMessage = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead).TrimEnd('\n', '\r');
+
+                try
                 {
-                    Program.logging.Log(String.Format("Received (IP={0}): ", clientIP) + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
+                    if (!recievedMessage.Contains("/favicon.ico") && !String.IsNullOrEmpty(recievedMessage))
+                    {
+                        Program.logging.Log(String.Format("Received (IP={0}): ", clientIP) + recievedMessage.Replace("\r\n", "<CR><LF>"), 0);
 
-                    LCH.Protocol protocol = LCH.Protocol.WHOIS;
-                    Command command = LCH.ConvertClientRequestToCommand(recievedMessage, ref protocol);
+                        LCH.Protocol protocol = LCH.Protocol.WHOIS;
+                        Command command = LCH.ConvertClientRequestToCommand(recievedMessage, ref protocol);
 
-                    string returnMessage = ExecuteCommand(command, clientIP, protocol);
+                        string returnMessage = ExecuteCommand(command, clientIP, protocol);
 
-                    Program.logging.Log(String.Format("Sending (Protocol={0}, IP={1}): {2}", command.GetProtocol().ToString(), clientIP, returnMessage.Replace("\r\n", "<CR><LF>")));
+                        Program.logging.Log(String.Format("Sending (Protocol={0}, IP={1}): {2}", command.GetProtocol().ToString(), clientIP, returnMessage.Replace("\r\n", "<CR><LF>")));
 
-                    byte[] dataBytes = ASCIIEncoding.ASCII.GetBytes(returnMessage);
-                    netStream.Write(dataBytes, 0, dataBytes.Length);
+                        byte[] dataBytes = ASCIIEncoding.ASCII.GetBytes(returnMessage);
+                        netStream.Write(dataBytes, 0, dataBytes.Length);
+                    }
                 }
-            }
-            catch
-            { }
+                catch
+                { }
 
-            netStream.Close();
-            client.Close();
+                netStream.Close();
+                client.Close();
+            }
+            catch (Exception e)
+            {
+                Program.logging.Log("An unexpected error occured! Exception: " + e.Message);
+            }
         }
 
         private string ExecuteCommand(Command command, string ip, LCH.Protocol protocol = LCH.Protocol.WHOIS)

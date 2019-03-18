@@ -16,6 +16,8 @@ namespace mullak99.ACW.NetworkACW.location
     {
         public static LocationClient location;
 
+        public static string showErrorOnTick = "";
+
         public LocationClientForm()
         {
             InitializeComponent();
@@ -23,9 +25,10 @@ namespace mullak99.ACW.NetworkACW.location
             registerDetoggles();
 
             ConnectMenuButton_Click(null, null);
-        }
 
-       
+            if (Program.GetUiAutoConnect() && connectPanel.GetConnected())
+                GetLocationMenuButton_Click(null, null);
+        }
 
         private void registerDetoggles()
         {
@@ -35,18 +38,41 @@ namespace mullak99.ACW.NetworkACW.location
             settingsMenuButton.registerDetoggles(new LCHLib.mUI.CustomControls.SubMenuButton[3] { connectMenuButton, getLocationMenuButton, setLocationMenuButton });
         }
 
+        private void ShowConnectionError(string error)
+        {
+            ConnectMenuButton_Click(null, null);
+            connectPanel.SetConnected(false);
+            connectPanel.ShowError(error);
+
+            connectMenuButton.Selected = true;
+            getLocationMenuButton.Selected = false;
+            setLocationMenuButton.Selected = false;
+            settingsMenuButton.Selected = false;
+        }
+
         private void Runtime_Tick(object sender, EventArgs e)
         {
             if (connectPanel.GetConnected())
             {
                 getLocationMenuButton.Enabled = true;
                 setLocationMenuButton.Enabled = true;
+
+                getLocationPanel.UpdateConsole();
+                setLocationPanel.UpdateConsole();
             }
             else
             {
                 getLocationMenuButton.Enabled = false;
                 setLocationMenuButton.Enabled = false;
             }
+
+            if (!String.IsNullOrEmpty(showErrorOnTick))
+            {
+                ShowConnectionError(showErrorOnTick);
+                showErrorOnTick = "";
+            }
+
+            Program.logging.SetDeveloperMode(Program.GetDeveloperMode());
         }
 
         private void ConnectMenuButton_Click(object sender, EventArgs e)
@@ -54,18 +80,50 @@ namespace mullak99.ACW.NetworkACW.location
             connectPanel.Enabled = true;
             connectPanel.Visible = true;
 
+            getLocationPanel.Enabled = false;
+            getLocationPanel.Visible = false;
+
+            setLocationPanel.Enabled = false;
+            setLocationPanel.Visible = false;
+
             settingsPanel.Enabled = false;
             settingsPanel.Visible = false;
         }
 
         private void GetLocationMenuButton_Click(object sender, EventArgs e)
         {
+            connectMenuButton.Selected = false;
+            getLocationMenuButton.Selected = true;
 
+            connectPanel.Enabled = false;
+            connectPanel.Visible = false;
+
+            getLocationPanel.Enabled = true;
+            getLocationPanel.Visible = true;
+
+            setLocationPanel.Enabled = false;
+            setLocationPanel.Visible = false;
+
+            settingsPanel.Enabled = false;
+            settingsPanel.Visible = false;
         }
 
         private void SetLocationMenuButton_Click(object sender, EventArgs e)
         {
+            connectMenuButton.Selected = false;
+            setLocationMenuButton.Selected = true;
 
+            connectPanel.Enabled = false;
+            connectPanel.Visible = false;
+
+            getLocationPanel.Enabled = false;
+            getLocationPanel.Visible = false;
+
+            setLocationPanel.Enabled = true;
+            setLocationPanel.Visible = true;
+
+            settingsPanel.Enabled = false;
+            settingsPanel.Visible = false;
         }
 
         private void SettingsMenuButton_Click(object sender, EventArgs e)
@@ -73,18 +131,24 @@ namespace mullak99.ACW.NetworkACW.location
             connectPanel.Enabled = false;
             connectPanel.Visible = false;
 
+            getLocationPanel.Enabled = false;
+            getLocationPanel.Visible = false;
+
+            setLocationPanel.Enabled = false;
+            setLocationPanel.Visible = false;
+
             settingsPanel.Enabled = true;
             settingsPanel.Visible = true;
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            ControlPaint.DrawBorder(e.Graphics, ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
         }
 
         private void QuitButton_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            ControlPaint.DrawBorder(e.Graphics, ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
         }
 
         private void SidePanel_Paint(object sender, PaintEventArgs e)
@@ -125,10 +189,5 @@ namespace mullak99.ACW.NetworkACW.location
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
-
-        private void ConnectPanel_Enter(object sender, EventArgs e)
-        {
-
-        }
     }
 }

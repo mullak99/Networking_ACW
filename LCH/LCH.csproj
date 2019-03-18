@@ -55,6 +55,7 @@
     <Compile Include="mUI\CustomControls\SubMenuButton.Designer.cs">
       <DependentUpon>SubMenuButton.cs</DependentUpon>
     </Compile>
+    <Compile Include="mUI\TextBoxWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

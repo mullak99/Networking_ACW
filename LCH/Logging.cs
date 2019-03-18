@@ -8,6 +8,8 @@ namespace mullak99.ACW.NetworkACW.LCHLib
         private string _logPath = "";
         private bool _isDevMode = false;
 
+        private TextWriter _secondaryOutput = null;
+
         /// <summary>
         /// Handles the logging of all messages to a log-file and/or console
         /// </summary>
@@ -35,6 +37,23 @@ namespace mullak99.ACW.NetworkACW.LCHLib
         public bool GetDeveloperMode()
         {
             return _isDevMode;
+        }
+
+        /// <summary>
+        /// Set secondary console output
+        /// </summary>
+        /// <param name="tw">Custom TextWriter</param>
+        public void SetConsoleOut(TextWriter tw)
+        {
+            _secondaryOutput = tw;
+        }
+
+        /// <summary>
+        /// Resets Console Output to default
+        /// </summary>
+        public void ResetConsoleOut()
+        {
+            _secondaryOutput = null;
         }
 
         /// <summary>
@@ -113,7 +132,11 @@ namespace mullak99.ACW.NetworkACW.LCHLib
         /// <param name="skipFileAppend">Skip writing line to log file</param>
         private void IntLog(string log, bool skipWriteLine = false, bool skipFileAppend = false)
         {
-            if (!skipWriteLine) Console.WriteLine(log.TrimEnd('\r', '\n'));
+            if (!skipWriteLine)
+            {
+                Console.WriteLine(log.TrimEnd('\r', '\n'));
+                if (_secondaryOutput != null) _secondaryOutput.WriteLine(log.TrimEnd('\r', '\n'));
+            }
             if (!String.IsNullOrEmpty(_logPath) && !skipFileAppend)
                 File.AppendAllText(_logPath, log + Environment.NewLine);
         }

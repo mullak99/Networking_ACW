@@ -50,7 +50,6 @@
             this.serverAddressTextBox.Name = "serverAddressTextBox";
             this.serverAddressTextBox.Size = new System.Drawing.Size(301, 27);
             this.serverAddressTextBox.TabIndex = 0;
-            this.serverAddressTextBox.TextChanged += new System.EventHandler(this.ServerAddressTextBox_TextChanged);
             this.serverAddressTextBox.Enter += new System.EventHandler(this.ServerAddressTextBox_Enter);
             this.serverAddressTextBox.Leave += new System.EventHandler(this.ServerAddressTextBox_Leave);
             // 
@@ -78,7 +77,6 @@
             0,
             0,
             0});
-            this.portTextBox.ValueChanged += new System.EventHandler(this.PortTextBox_ValueChanged);
             // 
             // addressLabel
             // 
@@ -151,7 +149,6 @@
             0,
             0,
             0});
-            this.timeoutDelayTextBox.ValueChanged += new System.EventHandler(this.TimeoutDelayTextBox_ValueChanged);
             // 
             // errorLabel
             // 
@@ -161,7 +158,6 @@
             this.errorLabel.Name = "errorLabel";
             this.errorLabel.Size = new System.Drawing.Size(574, 102);
             this.errorLabel.TabIndex = 7;
-            this.errorLabel.Text = "errorPlaceholder";
             this.errorLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
             // label2
