@@ -38,6 +38,24 @@ namespace mullak99.ACW.NetworkACW.LCHLib
         }
 
         /// <summary>
+        /// Sets the logging path
+        /// </summary>
+        /// <param name="logPath">Path of the log file (Leave blank for no log file)</param>
+        public void SetLogPath(string logPath)
+        {
+            _logPath = logPath;
+        }
+
+        /// <summary>
+        /// Gets the logging path
+        /// </summary>
+        /// <returns>Path of the log file</returns>
+        public string GetLogPath()
+        {
+            return _logPath;
+        }
+
+        /// <summary>
         /// Adds the desired string to the log
         /// </summary>
         /// <param name="log">Raw logging message</param>

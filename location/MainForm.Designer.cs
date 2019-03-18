@@ -40,6 +40,7 @@
             this.connectMenuButton = new mullak99.ACW.NetworkACW.LCHLib.mUI.CustomControls.SubMenuButton();
             this.copyrightLabel = new System.Windows.Forms.Label();
             this.runtime = new System.Windows.Forms.Timer(this.components);
+            this.settingsPanel = new mullak99.ACW.NetworkACW.location.MenuPanels.SettingsPanel();
             this.connectPanel = new mullak99.ACW.NetworkACW.location.MenuPanels.ConnectPanel();
             this.titleBar.SuspendLayout();
             this.sidePanel.SuspendLayout();
@@ -90,7 +91,7 @@
             // 
             // sidePanel
             // 
-            this.sidePanel.BackColor = System.Drawing.Color.Gray;
+            this.sidePanel.BackColor = System.Drawing.SystemColors.ControlDarkDark;
             this.sidePanel.Controls.Add(this.panel1);
             this.sidePanel.Controls.Add(this.settingsMenuButton);
             this.sidePanel.Controls.Add(this.setLocationMenuButton);
@@ -173,9 +174,17 @@
             this.runtime.Enabled = true;
             this.runtime.Tick += new System.EventHandler(this.Runtime_Tick);
             // 
+            // settingsPanel
+            // 
+            this.settingsPanel.BackColor = System.Drawing.Color.Gray;
+            this.settingsPanel.Location = new System.Drawing.Point(149, 26);
+            this.settingsPanel.Name = "settingsPanel";
+            this.settingsPanel.Size = new System.Drawing.Size(650, 422);
+            this.settingsPanel.TabIndex = 4;
+            // 
             // connectPanel
             // 
-            this.connectPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.connectPanel.BackColor = System.Drawing.Color.Gray;
             this.connectPanel.Location = new System.Drawing.Point(149, 26);
             this.connectPanel.Name = "connectPanel";
             this.connectPanel.Size = new System.Drawing.Size(650, 422);
@@ -185,11 +194,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.BackColor = System.Drawing.Color.Gray;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.connectPanel);
+            this.Controls.Add(this.settingsPanel);
             this.Controls.Add(this.sidePanel);
             this.Controls.Add(this.titleBar);
+            this.Controls.Add(this.connectPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.Name = "LocationClientForm";
@@ -214,6 +224,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Timer runtime;
         private MenuPanels.ConnectPanel connectPanel;
+        private MenuPanels.SettingsPanel settingsPanel;
     }
 }
 

@@ -35,6 +35,8 @@
             this.connectButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.timeoutDelayTextBox = new System.Windows.Forms.NumericUpDown();
+            this.errorLabel = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.portTextBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeoutDelayTextBox)).BeginInit();
             this.SuspendLayout();
@@ -43,16 +45,20 @@
             // 
             this.serverAddressTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.serverAddressTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.serverAddressTextBox.ForeColor = System.Drawing.Color.Black;
             this.serverAddressTextBox.Location = new System.Drawing.Point(133, 55);
             this.serverAddressTextBox.Name = "serverAddressTextBox";
             this.serverAddressTextBox.Size = new System.Drawing.Size(301, 27);
             this.serverAddressTextBox.TabIndex = 0;
             this.serverAddressTextBox.TextChanged += new System.EventHandler(this.ServerAddressTextBox_TextChanged);
+            this.serverAddressTextBox.Enter += new System.EventHandler(this.ServerAddressTextBox_Enter);
+            this.serverAddressTextBox.Leave += new System.EventHandler(this.ServerAddressTextBox_Leave);
             // 
             // portTextBox
             // 
             this.portTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.portTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.portTextBox.ForeColor = System.Drawing.Color.Black;
             this.portTextBox.Location = new System.Drawing.Point(461, 55);
             this.portTextBox.Maximum = new decimal(new int[] {
             65536,
@@ -72,6 +78,7 @@
             0,
             0,
             0});
+            this.portTextBox.ValueChanged += new System.EventHandler(this.PortTextBox_ValueChanged);
             // 
             // addressLabel
             // 
@@ -124,6 +131,7 @@
             // 
             this.timeoutDelayTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.timeoutDelayTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeoutDelayTextBox.ForeColor = System.Drawing.Color.Black;
             this.timeoutDelayTextBox.Location = new System.Drawing.Point(133, 105);
             this.timeoutDelayTextBox.Maximum = new decimal(new int[] {
             10000,
@@ -136,19 +144,44 @@
             0,
             0});
             this.timeoutDelayTextBox.Name = "timeoutDelayTextBox";
-            this.timeoutDelayTextBox.Size = new System.Drawing.Size(119, 27);
+            this.timeoutDelayTextBox.Size = new System.Drawing.Size(89, 27);
             this.timeoutDelayTextBox.TabIndex = 6;
             this.timeoutDelayTextBox.Value = new decimal(new int[] {
             2000,
             0,
             0,
             0});
+            this.timeoutDelayTextBox.ValueChanged += new System.EventHandler(this.TimeoutDelayTextBox_ValueChanged);
+            // 
+            // errorLabel
+            // 
+            this.errorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.errorLabel.ForeColor = System.Drawing.SystemColors.Control;
+            this.errorLabel.Location = new System.Drawing.Point(38, 233);
+            this.errorLabel.Name = "errorLabel";
+            this.errorLabel.Size = new System.Drawing.Size(574, 102);
+            this.errorLabel.TabIndex = 7;
+            this.errorLabel.Text = "errorPlaceholder";
+            this.errorLabel.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.SystemColors.Control;
+            this.label2.Location = new System.Drawing.Point(222, 107);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 20);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "ms";
             // 
             // ConnectPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.BackColor = System.Drawing.Color.Gray;
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.errorLabel);
             this.Controls.Add(this.timeoutDelayTextBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.connectButton);
@@ -174,5 +207,7 @@
         private System.Windows.Forms.Button connectButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown timeoutDelayTextBox;
+        private System.Windows.Forms.Label errorLabel;
+        private System.Windows.Forms.Label label2;
     }
 }

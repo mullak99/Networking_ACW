@@ -13,7 +13,7 @@ namespace mullak99.ACW.NetworkACW.location
         private bool _connected = false;
 
         private string _ip;
-        private int _port, _timeOut;
+        private UInt16 _port, _timeOut;
 
         /// <summary>
         /// Connect to a specific server using TCP
@@ -21,7 +21,7 @@ namespace mullak99.ACW.NetworkACW.location
         /// <param name="serverIpAddress">IP Address of the server</param>
         /// <param name="serverPort">Port of the server</param>
         /// <param name="timeOut">Timeout to use for all requests to the server</param>
-        public LocationClient(IPAddress serverIpAddress, int serverPort, UInt16 timeOut = 2000, bool autoStart = true)
+        public LocationClient(IPAddress serverIpAddress, UInt16 serverPort, UInt16 timeOut = 2000, bool autoStart = true)
         {
             try
             {
@@ -32,14 +32,23 @@ namespace mullak99.ACW.NetworkACW.location
 
                 _ip = serverIpAddress.ToString();
                 _port = serverPort;
-                _timeOut = Convert.ToInt32(timeOut);
+                _timeOut = timeOut;
 
                 if (autoStart) Open();
             }
             catch (SocketException)
             {
-                Program.logging.Log(String.Format("'{0}' is not an address!", serverIpAddress.ToString()), 2);
+                Program.logging.Log(String.Format("'{0}' is not an address!", serverIpAddress.ToString()), 2, true);
             }
+        }
+
+        /// <summary>
+        /// Gets if the client is connected to a server
+        /// </summary>
+        /// <returns>If the client is connected</returns>
+        public bool GetConnected()
+        {
+            return _connected;
         }
 
         /// <summary>
@@ -105,7 +114,7 @@ namespace mullak99.ACW.NetworkACW.location
             {
                 string message = String.Format("Connection to '{0}:{1}' timed out!", _ip, _port);
 
-                Program.logging.Log(message, 2);
+                Program.logging.Log(message, 2, true);
                 return message;
             }
             catch (Exception e)
@@ -212,7 +221,7 @@ namespace mullak99.ACW.NetworkACW.location
                     if (cmd.ResolveResponse(data))
                         message = cmd.ToString();
                     else
-                        message = "ERROR: no entries found";
+                        message = data.ToString();
 
                     Program.logging.Log(message, 1, true);
                     return message;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,15 +15,17 @@ namespace mullak99.ACW.NetworkACW.location
     public partial class LocationClientForm : Form
     {
         public static LocationClient location;
-        public static SSM ssm;
 
         public LocationClientForm()
         {
             InitializeComponent();
-
             titleLabel.Text += Program.GetVersion();
             registerDetoggles();
+
+            ConnectMenuButton_Click(null, null);
         }
+
+       
 
         private void registerDetoggles()
         {
@@ -50,6 +53,9 @@ namespace mullak99.ACW.NetworkACW.location
         {
             connectPanel.Enabled = true;
             connectPanel.Visible = true;
+
+            settingsPanel.Enabled = false;
+            settingsPanel.Visible = false;
         }
 
         private void GetLocationMenuButton_Click(object sender, EventArgs e)
@@ -64,7 +70,11 @@ namespace mullak99.ACW.NetworkACW.location
 
         private void SettingsMenuButton_Click(object sender, EventArgs e)
         {
+            connectPanel.Enabled = false;
+            connectPanel.Visible = false;
 
+            settingsPanel.Enabled = true;
+            settingsPanel.Visible = true;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -115,5 +125,10 @@ namespace mullak99.ACW.NetworkACW.location
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
+
+        private void ConnectPanel_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -15,8 +15,11 @@ namespace mullak99.ACW.NetworkACW.location
         private static List<string> progArgs = new List<string>();
 
         private static string _serverAddress = "127.0.0.1";
-        private static int _serverPort = 43;
+        private static UInt16 _serverPort = 43;
         private static UInt16 _timeOut = 2000;
+
+        private static bool _uiAutoConnect = false;
+        private static bool _uiAutoFill = false;
 
         internal static Logging logging;
         private static string _logFile;
@@ -45,7 +48,7 @@ namespace mullak99.ACW.NetworkACW.location
                         progArgs.Add(string.Join(" ", args[i], args[i + 1]));
                         i++;
                     }
-                    else if (args[i].ToLower().TrimStart('/', '-') == "p" && !String.IsNullOrEmpty(args[i + 1]) && int.TryParse(args[i + 1], out _serverPort)) // Server Port
+                    else if (args[i].ToLower().TrimStart('/', '-') == "p" && !String.IsNullOrEmpty(args[i + 1]) && UInt16.TryParse(args[i + 1], out _serverPort)) // Server Port
                     {
                         progArgs.Add(string.Join(" ", args[i], args[i + 1]));
                         i++;
@@ -154,7 +157,7 @@ namespace mullak99.ACW.NetworkACW.location
         /// </summary>
         /// <param name="ipAddress">Server IP Address</param>
         /// <param name="port">Server Port</param>
-        public static void SetServerAddress(string ipAddress, int port)
+        public static void SetServerAddress(string ipAddress, UInt16 port)
         {
             _serverAddress = ipAddress;
             _serverPort = port;
@@ -196,8 +199,7 @@ namespace mullak99.ACW.NetworkACW.location
         public static void SetDeveloperMode(bool devMode)
         {
             _verbose = devMode;
-            SetDeveloperMode(_verbose);
-            if (devMode) logging.Log("Developer Mode Enabled!", 0);
+            if (devMode) Program.logging.Log("Developer Mode Enabled!", 0);
         }
 
         /// <summary>
@@ -216,7 +218,7 @@ namespace mullak99.ACW.NetworkACW.location
         public static void SetLogPath(string path)
         {
             _logFile = path;
-            logging.Log(String.Format("Log path changed to '{0}'", path), 0);
+            Program.logging.Log(String.Format("Log path changed to '{0}'", path), 0);
         }
 
         /// <summary>
@@ -226,6 +228,42 @@ namespace mullak99.ACW.NetworkACW.location
         public static string GetLogPath()
         {
             return _logFile;
+        }
+
+        /// <summary>
+        /// Sets the AutoConnect status on the GUI
+        /// </summary>
+        /// <param name="autoConnect">Autoconnect</param>
+        public static void SetUiAutoConnect(bool autoConnect)
+        {
+            _uiAutoConnect = autoConnect;
+        }
+
+        /// <summary>
+        /// Gets the AutoConnect status on the GUI
+        /// </summary>
+        /// <returns>Autoconnect</returns>
+        public static bool GetUiAutoConnect()
+        {
+            return _uiAutoConnect;
+        }
+
+        /// <summary>
+        /// Gets the AutoFill Server Address status on the GUI
+        /// </summary>
+        /// <param name="autoFill">Autofill</param>
+        public static void SetUiAutoFill(bool autoFill)
+        {
+            _uiAutoFill = autoFill;
+        }
+
+        /// <summary>
+        /// Gets the AutoFill Server Address status on the GUI
+        /// </summary>
+        /// <returns>Autofill</returns>
+        public static bool GetUiAutoFill()
+        {
+            return _uiAutoFill;
         }
 
         /// <summary>
